@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liam's Penguin Sanctuary of Code</title>
+<style>
+  :root{
+    --accent-gradient: linear-gradient(135deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
+    --bg-dark:#111; --text:#fff; --title-blue:#60a5fa;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{
+    margin:0; padding:0; background:var(--bg-dark); color:var(--text);
+    font-family:"Comic Sans MS","Baloo 2","Fredoka",system-ui,sans-serif;
+    overflow-x:hidden;
+  }
+
+  /* ===== Sticky image swap (two slides) ===== */
+  .sticky-wrap{position:relative;height:200vh}
+  .sticky{
+    position:sticky; top:0; height:100vh;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    background-size:cover; background-position:center; padding:2rem;
+  }
+  .hero{background:url('your-photo-1.jpg') center/cover no-repeat; z-index:1}
+  .swap{
+    background:
+      linear-gradient(rgba(96,165,250,.55),rgba(192,132,252,.55)),
+      url('your-photo-2.jpg') center/cover no-repeat;
+    z-index:2;
+  }
+
+  .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:1rem; align-items:center}
+  h1.title{
+    margin:0; font-size:clamp(2rem,6vw,3.5rem); color:var(--title-blue);
+    text-shadow:0 3px 18px rgba(0,0,0,.6);
+  }
+
+  /* ===== About card ===== */
+  .about-card{
+    width:100%;
+    background:rgba(26,26,26,.85); backdrop-filter:blur(2px);
+    border:3px solid transparent; border-radius:16px; border-image:var(--accent-gradient) 1;
+    padding:1.25rem clamp(1rem,3vw,2rem) 1.75rem; text-align:left;
+    box-shadow:0 10px 25px rgba(0,0,0,.35)
+  }
+  .about-header{
+    display:flex; align-items:center; justify-content:center;
+    gap:clamp(.5rem,2vw,1rem); margin-bottom:.75rem;
+  }
+  .about-header h2{
+    margin:0; font-size:clamp(1.25rem,3.2vw,2rem); line-height:1.1;
+    background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .about-icon{
+    width:clamp(36px,6vw,60px); height:clamp(36px,6vw,60px); object-fit:cover; border-radius:10px;
+    border:2px solid transparent; border-image:var(--accent-gradient) 1; background:#222;
+  }
+  @media (max-width:560px){
+    .about-header{flex-wrap:wrap}
+    .about-icon{order:2}
+    .about-header h2{order:1; width:100%}
+  }
+
+  /* ===== Projects grid ===== */
+  .section{padding:2.5rem 0 3.5rem}
+  .section .container{width:min(1100px,92vw); margin:0 auto}
+  .grid-title{font-size:clamp(1.3rem,3.5vw,2rem); margin:0 0 .75rem 0; color:#fbcfe8; text-align:center}
+
+  .button-grid{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin:0 auto;
+  }
+  .btn{
+    height:90px; border:none; border-radius:14px; font-weight:700;
+    font-size:clamp(.9rem,1.8vw,1rem); color:#111;
+    box-shadow:0 8px 18px rgba(0,0,0,.35); cursor:pointer;
+    outline:2px solid rgba(255,255,255,.06);
+    transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    animation:pulse 3.6s ease-in-out infinite;
+  }
+  .btn:hover{transform:translateY(-3px); box-shadow:0 12px 24px rgba(0,0,0,.45); filter:brightness(1.05)}
+  .btn:active{transform:translateY(0)}
+  @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.02)} }
+  @media (prefers-reduced-motion:reduce){ .btn{animation:none} }
+  @media (max-width:980px){.button-grid{grid-template-columns:repeat(4,1fr)}}
+  @media (max-width:760px){.button-grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:520px){.button-grid{grid-template-columns:repeat(2,1fr)}}
+  .hint{opacity:.75; font-size:.85rem; text-align:center; margin-top:.4rem}
+
+  /* ===== Fixed "Top" button ===== */
+  #toTop{
+    position:fixed; right:18px; bottom:18px; z-index:1000;
+    display:flex; align-items:center; gap:.5rem;
+    background:#ffffff; color:#111; padding:.7rem 1rem; border-radius:999px; font-weight:800;
+    border:3px solid transparent; border-image:var(--accent-gradient) 1; box-shadow:0 10px 25px rgba(0,0,0,.35);
+    opacity:0; pointer-events:none; transform:translateY(8px); transition:opacity .2s, transform .2s;
+  }
+  #toTop.show{opacity:1; pointer-events:auto; transform:translateY(0)}
+  #toTop .emoji{font-size:1.2rem}
+
+  /* ===== Floating penguin (emoji only) ===== */
+  #chibi{
+    position:fixed; left:20vw; top:30vh; z-index:900;
+    font-size:48px; line-height:1; will-change:transform;
+    user-select:none; -webkit-user-drag:none;
+  }
+</style>
+</head>
+<body>
+  <!-- Sticky image area -->
+  <div class="sticky-wrap">
+    <section class="sticky hero" id="top">
+      <div class="stack">
+        <h1 class="title">Liam's Penguin Sanctuary of Code</h1>
+        <article class="about-card">
+          <header class="about-header">
+            <img class="about-icon" src="" alt="(add image)" />
+            <h2>About Me</h2>
+            <img class="about-icon" src="" alt="(add image)" />
+          </header>
+          <div class="about-content">
+            <p>[Short playful intro. Penguins, goofy utilities, and late-night experiments.]</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="sticky swap">
+      <div class="stack">
+        <h1 class="title">Welcome to the Playground</h1>
+        <article class="about-card">
+          <header class="about-header">
+            <img class="about-icon" src="" alt="(add image)" />
+            <h2>What You’ll Find</h2>
+            <img class="about-icon" src="" alt="(add image)" />
+          </header>
+          <div class="about-content">
+            <p>Demos, silly visual toys, Discord bot bits, browser tricks—then the grid of projects below.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- Projects grid -->
+  <section class="section">
+    <div class="container">
+      <h3 class="grid-title">Projects & Experiments</h3>
+      <div class="button-grid" id="buttonGrid"></div>
+      <p class="hint">Edit the <code>BUTTONS</code> array in the JS to set where each button goes.</p>
+    </div>
+  </section>
+
+  <!-- Fixed Top button -->
+  <button id="toTop" aria-label="Back to top"><span class="emoji">🐧</span> Top</button>
+
+  <!-- Floating penguin (emoji only) -->
+  <div id="chibi">🐧</div>
+
+<script>
+  /* ===== Pastel palette ===== */
+  const PASTELS = [
+    "#f9a8d4","#fcd34d","#a7f3d0","#bfdbfe","#fbcfe8",
+    "#fde68a","#bbf7d0","#c7d2fe","#fca5a5","#fdba74",
+    "#d9f99d","#93c5fd","#f5d0fe","#fecaca","#bef264",
+    "#7dd3fc","#fda4af","#c4b5fd","#fef3c7","#6ee7b7",
+    "#fef08a","#a5b4fc","#f472b6","#d8b4fe","#f87171"
+  ];
+
+  /* ===== PROJECT BUTTONS ===== */
+  const BUTTONS = [
+    { label: "Matrix Rain", href: "matrix.html" },
+    { label: "Chibi Penguin Pet", href: "penguin.html" },
+    { label: "Discord Bot", href: "discord-bot.html" },
+    { label: "HTML Hackscreen", href: "hack.html" },
+    { label: "Marvel Rivals Stats", href: "marvel.html" },
+    { label: "Cookie Clicker Mod", href: "cookie.html" },
+    { label: "ASCII Toys", href: "ascii.html" },
+    { label: "Rainbow Fire GIF", href: "rainbow-fire.html" },
+    { label: "Penguin Banner", href: "gfx-penguin-banner.html" },
+    { label: "Pride Gradients", href: "gradients.html" },
+    { label: "Penguin Igloo UI", href: "ui-igloo.html" },
+    { label: "Robux Meme UI", href: "robux.html" },
+    { label: "Desktop Messenger", href: "messenger.html" },
+    { label: "Waitlist Mock", href: "waitlist.html" },
+    { label: "V/VI Logo Lab", href: "logo-lab.html" },
+    { label: "Tiny Utilities", href: "utils.html" },
+    { label: "Gradient Maker", href: "gradient-maker.html" },
+    { label: "LS Airport Sign", href: "lsia-sign.html" },
+    { label: "Waldo Horror", href: "waldo-horror.html" },
+    { label: "Penguin Emojis", href: "penguin-emojis.html" },
+    { label: "Pong Leaderboard", href: "pong.html" },
+    { label: "Heist Bible", href: "heist-bible.html" },
+    { label: "Tag Generator", href: "tag-generator.html" },
+    { label: "Penguin Stickers", href: "stickers.html" },
+    { label: "Random Toy", href: "toy.html" }
+  ];
+
+  /* ===== Build button grid ===== */
+  const grid = document.getElementById("buttonGrid");
+  BUTTONS.forEach((b,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = b.label;
+    btn.style.backgroundColor = PASTELS[i % PASTELS.length];
+    btn.addEventListener("click", () => {
+      if (b.href && b.href !== "#") window.location.href = b.href;
+      else alert(b.label);
+    });
+    grid.appendChild(btn);
+  });
+
+  /* ===== Show Top button after scroll ===== */
+  const toTop = document.getElementById("toTop");
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 160) toTop.classList.add("show");
+    else toTop.classList.remove("show");
+  }, { passive:true });
+  toTop.addEventListener("click", () => {
+    document.getElementById("top").scrollIntoView({ behavior:"smooth" });
+  });
+
+  /* ===== Floating penguin bounce ===== */
+  const chibi = document.getElementById("chibi");
+  let x = window.innerWidth * 0.2, y = window.innerHeight * 0.3, size = 48;
+  let vx = 0.9, vy = 0.7, rafId = null;
+  function step(){
+    const w = window.innerWidth, h = window.innerHeight;
+    x += vx; y += vy;
+    if (x <= 0){ x = 0; vx = Math.abs(vx); }
+    if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
+    if (y <= 0){ y = 0; vy = Math.abs(vy); }
+    if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
+    chibi.style.transform = `translate(${x}px, ${y}px)`;
+    rafId = requestAnimationFrame(step);
+  }
+  function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
+  function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+  document.addEventListener("visibilitychange", () => document.hidden?stop():start());
+  addEventListener("resize", () => {
+    x = Math.min(x, innerWidth - size);
+    y = Math.min(y, innerHeight - size);
+  });
+  chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.6; vy += (Math.random()-.5)*0.6; });
+  start();
+</script>
+</body>
+</html>
