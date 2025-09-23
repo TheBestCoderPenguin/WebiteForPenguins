@@ -3,459 +3,534 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Raid Shadow Legends — Fan Portal</title>
+<title>Los Santos Mod Lab — Fan Hub</title>
 <meta name="theme-color" content="#0b0f1a" />
 <style>
   :root{
     --bg:#0b0f1a;
-    --bg2:#0e1422;
     --ink:#e6f0ff;
     --muted:#a4b1cc;
-    --gold:#ffd166;
+    --lime:#b3ff74;
     --teal:#67e8f9;
-    --pink:#f472b6;
     --vio:#a78bfa;
-    --lime:#bef264;
+    --pink:#f472b6;
+    --gold:#ffd166;
+    --red:#ff6584;
     --glow: 0 0 22px rgba(103,232,249,.35), 0 0 44px rgba(167,139,250,.25);
     --grad: conic-gradient(from 120deg at 50% 50%, #67e8f9, #a78bfa, #f472b6, #ffd166, #67e8f9);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
-    margin:0; color:var(--ink); background: radial-gradient(1200px 600px at 50% -10%, #142036 0%, #0b0f1a 50%) fixed;
+    margin:0; color:var(--ink);
+    background: radial-gradient(1200px 600px at 50% -10%, #142036 0%, #0b0f1a 50%) fixed;
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     overflow-x:hidden;
   }
-  a{color:inherit}
+  a{color:inherit;text-decoration:none}
 
-  /* =========== Global FX =========== */
-  .glow-border{
-    position:relative; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.03);
+  /* Utility */
+  .container{width:min(1200px,92vw); margin:0 auto}
+  .row{display:flex; gap:16px; flex-wrap:wrap}
+  .glow{
+    box-shadow: var(--glow);
   }
-  .glow-border::before{
-    content:""; position:absolute; inset:-2px; border-radius:inherit; padding:1px;
-    background: var(--grad); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude; filter: blur(6px) saturate(120%);
-    opacity:.5; animation: spinSlow 16s linear infinite;
+  .glass{
+    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.12); border-radius:16px;
+    backdrop-filter: blur(6px);
   }
-  @keyframes spinSlow{ to{ transform: rotate(360deg); } }
-  .btn{
-    display:inline-flex; align-items:center; gap:.6rem; padding:.9rem 1.1rem; border-radius:999px;
-    background:linear-gradient(135deg,#1b2340,#111a2e); color:var(--ink);
-    border:1px solid rgba(255,255,255,.14); text-decoration:none; font-weight:700; letter-spacing:.3px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 12px 24px rgba(0,0,0,.35);
-    transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
-  }
-  .btn:hover{ transform: translateY(-2px); filter: brightness(1.05); box-shadow:0 18px 40px rgba(0,0,0,.5); }
-  .btn--primary{ background:linear-gradient(135deg,#10243a,#1a2b4f); border-color: rgba(103,232,249,.5); box-shadow: var(--glow); }
   .badge{
     display:inline-block; padding:.35rem .6rem; border-radius:999px; font-size:.75rem; color:#0b0f1a; font-weight:800;
     background:linear-gradient(135deg,var(--gold),#ffd98f);
   }
-
-  /* =========== Hero =========== */
-  header.hero{
-    position:relative; min-height:92vh; display:grid; place-items:center; overflow:hidden;
+  .btn{
+    display:inline-flex; align-items:center; gap:.6rem; padding:.8rem 1rem; border-radius:999px;
+    background:linear-gradient(135deg,#10243a,#1a2b4f); color:var(--ink);
+    border:1px solid rgba(103,232,249,.35); font-weight:800; letter-spacing:.2px;
+    box-shadow:var(--glow); transition:transform .15s ease, filter .15s ease;
   }
-  canvas#fx{ position:absolute; inset:0; width:100%; height:100%; }
+  .btn:hover{transform:translateY(-2px); filter:brightness(1.05)}
+  .title-grad{
+    background: linear-gradient(180deg,#e6f0ff,#bcd3ff 50%, #9fb3ff);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  /* HERO */
+  header.hero{
+    position:relative; min-height:88vh; display:grid; place-items:center; overflow:hidden;
+  }
   .hero__bg{
-    position:absolute; inset:-20% -10%; background: radial-gradient(60% 60% at 50% 30%, rgba(103,232,249,.25), transparent 60%),
-      radial-gradient(40% 30% at 20% 70%, rgba(244,114,182,.2), transparent 60%),
-      radial-gradient(45% 35% at 80% 60%, rgba(167,139,250,.25), transparent 60%);
-    filter:saturate(140%) blur(28px); animation: drift 20s ease-in-out infinite alternate;
+    position:absolute; inset:0;
+    background:
+      url('https://images.unsplash.com/photo-1526401281623-359c7b8f68f4?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+    filter: saturate(120%) contrast(1.05) brightness(.8);
+  }
+  .hero__overlay{
+    position:absolute; inset:0; background:
+      radial-gradient(60% 60% at 50% 30%, rgba(103,232,249,.22), transparent 60%),
+      radial-gradient(40% 30% at 20% 70%, rgba(244,114,182,.18), transparent 60%),
+      radial-gradient(45% 35% at 80% 60%, rgba(167,139,250,.2), transparent 60%);
+    mix-blend-mode: screen; pointer-events:none;
+    animation: drift 16s ease-in-out infinite alternate;
   }
   @keyframes drift{
     0%{transform:translateY(-2%) scale(1)}
-    100%{transform:translateY(3%) scale(1.05)}
+    100%{transform:translateY(2%) scale(1.04)}
   }
-  .hero__inner{ position:relative; z-index:2; padding:2rem; text-align:center; width:min(1100px,92vw); }
-  .spin-logo{
+  .hero__inner{ position:relative; z-index:2; text-align:center; padding:2rem }
+  .logo-spin{
     width:120px; height:120px; margin:0 auto 1rem; border-radius:50%;
-    background: var(--grad); box-shadow: var(--glow);
-    animation: spinLogo 8s linear infinite;
+    background:var(--grad); animation:spin 8s linear infinite;
   }
-  @keyframes spinLogo{ to{ transform: rotate(360deg); } }
-  h1.title{
-    font-size: clamp(2rem, 6vw, 4.2rem); margin:.3rem 0 .6rem; line-height:1.05;
-    background: linear-gradient(180deg,#e6f0ff,#bcd3ff 50%, #9fb3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    text-shadow: 0 10px 32px rgba(103,232,249,.2);
-  }
-  p.kicker{ color:var(--muted); max-width:800px; margin:0 auto 1.2rem; font-size:clamp(.95rem,2.2vw,1.1rem) }
-  .cta{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; margin-top:1rem }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hero h1{font-size:clamp(2.2rem,7vw,4.6rem); margin:.2rem 0 .6rem}
+  .hero p{color:var(--muted); max-width:800px; margin:0 auto 1.2rem; font-size:clamp(1rem,2.3vw,1.15rem)}
+  .hero .cta{display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; margin-top:1rem}
 
-  /* =========== Counters =========== */
-  .stats{
-    margin-top:1.6rem; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
-  }
-  .stat{
-    min-width:180px; padding:1rem 1.2rem; text-align:center; border-radius:14px; background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-    transition: transform .2s ease;
-  }
-  .stat:hover{ transform: translateY(-2px); }
-  .stat .num{ font-size:1.8rem; font-weight:900; letter-spacing:.5px; color:#eaf2ff; text-shadow: var(--glow); }
-  .stat .lab{ font-size:.85rem; color:var(--muted) }
-
-  /* =========== Carousel =========== */
-  .carousel{
-    margin:2.2rem auto 0; width:min(1100px,92vw); position:relative;
+  /* MARQUEE */
+  .marquee{
+    margin:2rem auto 0; width:min(1200px,92vw); position:relative;
   }
   .track{ display:flex; gap:16px; overflow:hidden; mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent); }
   .slide{
-    flex:0 0 320px; height:190px; border-radius:16px; position:relative; overflow:hidden;
-    border:1px solid rgba(255,255,255,.08); background:#12192b; box-shadow:0 10px 24px rgba(0,0,0,.35);
+    flex:0 0 340px; height:200px; border-radius:16px; position:relative; overflow:hidden;
+    border:1px solid rgba(255,255,255,.1); background:#12192b; box-shadow:0 10px 24px rgba(0,0,0,.35);
   }
-  .slide img{ width:100%; height:100%; object-fit:cover; opacity:.9; filter:saturate(120%) contrast(1.05) }
+  .slide img{ width:100%; height:100%; object-fit:cover; opacity:.92; filter:saturate(120%) contrast(1.05) }
   .slide .label{ position:absolute; bottom:8px; left:10px; padding:.35rem .6rem; border-radius:10px;
     background:rgba(0,0,0,.45); backdrop-filter: blur(2px); font-weight:800; font-size:.85rem }
-  .marquee{ animation: scrollX 30s linear infinite; }
+  .marquee .track{ animation: scrollX 30s linear infinite; }
   @keyframes scrollX{ to{ transform: translateX(-50%); } }
 
-  /* =========== Section heading =========== */
-  .section{
-    width:min(1100px,92vw); margin: 3rem auto 0; position:relative;
+  /* METRICS + MINI-LOADER */
+  .metrics{ margin:2rem auto; }
+  .kpis{ display:grid; grid-template-columns: repeat(4,1fr); gap:12px }
+  @media (max-width:900px){ .kpis{ grid-template-columns: repeat(2,1fr) } }
+  @media (max-width:580px){ .kpis{ grid-template-columns: 1fr } }
+  .kpi{ padding:1rem; border-radius:16px }
+  .kpi h3{margin:.2rem 0; font-size:1rem; color:#cfe0ff}
+  .bar-wrap{height:10px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden}
+  .bar{height:100%; width:0%; border-radius:999px; transition:width 1.2s ease}
+  .bar.teal{background:linear-gradient(90deg,#22d3ee,#67e8f9)}
+  .bar.gold{background:linear-gradient(90deg,#f6c453,#ffd166)}
+  .bar.vio{background:linear-gradient(90deg,#7c6ee6,#a78bfa)}
+  .bar.pink{background:linear-gradient(90deg,#fb7185,#f472b6)}
+  .mini-loader{
+    width:260px; border-radius:12px; padding:.8rem; position:relative; overflow:hidden;
   }
-  .section h2{
-    font-size: clamp(1.4rem,4vw,2.2rem); margin:0 0 .8rem; letter-spacing:.4px;
+  .mini-loader h4{margin:0 0 .35rem; font-size:.95rem}
+  .load-rail{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+  .load-bar{height:100%;width:0;background:linear-gradient(90deg,#67e8f9,#a78bfa);animation:loadA 2.2s ease-in-out infinite}
+  .swap{position:absolute; right:.8rem; top:.8rem; font-size:.75rem; color:var(--muted)}
+  @keyframes loadA{
+    0%{width:0}
+    50%{width:100%}
+    100%{width:0}
   }
+  /* second bar swaps in a smaller inner box */
+  .mini-inner{
+    margin-top:.6rem; padding:.5rem; border-radius:8px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08)
+  }
+  .load-bar2{height:8px;width:0;background:linear-gradient(90deg,#ffd166,#f472b6);animation:loadB 2.2s ease-in-out infinite reverse}
+  @keyframes loadB{
+    0%{width:100%}
+    50%{width:0}
+    100%{width:100%}
+  }
+
+  /* CHARTS */
+  .charts{ margin:2rem auto }
+  .chart-wrap{ display:grid; grid-template-columns: 1.2fr 1fr; gap:16px }
+  @media (max-width:1000px){ .chart-wrap{ grid-template-columns: 1fr } }
+  canvas{ display:block; width:100%; height:320px; background:rgba(255,255,255,.03); border-radius:16px }
+
+  /* CHARACTERS (GTA-themed fan cards) */
+  .section{ margin:3rem auto 0 }
+  .section h2{ font-size: clamp(1.4rem,4vw,2.2rem); margin:0 0 .8rem }
   .section p.sub{ color:var(--muted); margin:.2rem 0 1.2rem }
-
-  /* =========== Champion Grid =========== */
-  .grid{
-    display:grid; grid-template-columns: repeat(12,1fr); gap:12px;
-  }
-  @media (max-width:1000px){ .grid{ grid-template-columns: repeat(8,1fr); } }
-  @media (max-width:700px){ .grid{ grid-template-columns: repeat(4,1fr); } }
-
-  .card{
-    grid-column: span 4; perspective: 1000px;
-  }
-  .flip{
-    position:relative; height:320px; border-radius:16px; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1);
-  }
-  .card:hover .flip{ transform: rotateY(180deg); }
-  .face{
-    position:absolute; inset:0; border-radius:16px; overflow:hidden; backface-visibility:hidden;
-    border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 28px rgba(0,0,0,.45);
-  }
-  .front{ background:#0f172a; display:grid; place-items:end; }
-  .front img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.9 }
-  .front .meta{ position:relative; z-index:2; width:100%; padding:.6rem .7rem; background:linear-gradient(to top, rgba(0,0,0,.65), transparent); }
-  .front .meta .name{ font-weight:900; letter-spacing:.4px }
-  .front .meta .tags{ font-size:.8rem; color:var(--muted) }
-
+  .grid{ display:grid; grid-template-columns: repeat(12,1fr); gap:14px }
+  @media (max-width:1100px){ .grid{ grid-template-columns: repeat(8,1fr) } }
+  @media (max-width:700px){ .grid{ grid-template-columns: repeat(4,1fr) } }
+  .card{ grid-column: span 4; perspective:1000px }
+  .flip{ position:relative; height:340px; border-radius:16px; transform-style:preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1) }
+  .card:hover .flip{ transform: rotateY(180deg) }
+  .face{ position:absolute; inset:0; border-radius:16px; overflow:hidden; backface-visibility:hidden;
+    border:1px solid rgba(255,255,255,.12); box-shadow:0 12px 28px rgba(0,0,0,.45) }
+  .front{ background:#0f172a; display:grid; place-items:end }
+  .front img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.92 }
+  .front .meta{ position:relative; z-index:2; width:100%; padding:.6rem .7rem; background:linear-gradient(to top, rgba(0,0,0,.65), transparent) }
+  .front .name{ font-weight:900; letter-spacing:.4px }
+  .front .tags{ font-size:.8rem; color:var(--muted) }
   .back{
-    background: radial-gradient(80% 80% at 50% 50%, rgba(103,232,249,.18), rgba(0,0,0,.5)), #0f172a;
-    transform: rotateY(180deg); display:flex; flex-direction:column; justify-content:space-between;
+    background: radial-gradient(80% 80% at 50% 50%, rgba(103,232,249,.18), rgba(0,0,0,.55)), #0f172a;
+    transform: rotateY(180deg); display:flex; flex-direction:column; justify-content:space-between
   }
   .back .copy{ padding:1rem; font-size:.95rem; color:#dfe8ff }
-  .back .actions{ display:flex; gap:.6rem; padding:0 1rem 1rem; }
+  .back .actions{ display:flex; gap:.6rem; padding:0 1rem 1rem }
 
-  /* =========== Feature Row =========== */
-  .features{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:1rem; }
-  @media (max-width:900px){ .features{ grid-template-columns: 1fr; } }
-  .feat{
-    padding:1rem; border-radius:16px; background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-    border:1px solid rgba(255,255,255,.08);
-  }
-  .feat h3{ margin:.2rem 0 .4rem }
-  .feat p{ margin:.2rem 0 .6rem; color:var(--muted) }
-
-  /* =========== Call to action =========== */
+  /* CTA FOOTER */
   .cta-bar{
-    margin:3rem auto; width:min(1100px,92vw); padding:1.2rem; border-radius:16px;
+    margin:3rem auto; width:min(1200px,92vw); padding:1.2rem; border-radius:16px;
     background:linear-gradient(90deg, rgba(103,232,249,.08), rgba(167,139,250,.08));
-    border:1px solid rgba(255,255,255,.08); display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    border:1px solid rgba(255,255,255,.12); display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
   }
+  footer{ padding:2rem 1rem; color:var(--muted); text-align:center; font-size:.9rem }
 
-  /* =========== Footer =========== */
-  footer{
-    margin-top:2rem; padding:2rem 1rem; background:linear-gradient(180deg, transparent, rgba(255,255,255,.02));
-    color:var(--muted); text-align:center; font-size:.9rem;
-  }
-
-  /* =========== Floating bits =========== */
-  .float-blob{
-    position:absolute; width:180px; height:180px; border-radius:50%;
-    background:radial-gradient(70% 70% at 30% 30%, rgba(255,209,102,.5), transparent 60%);
-    filter: blur(10px); opacity:.4; mix-blend-mode: screen; animation: orb 12s ease-in-out infinite;
-  }
-  .float-blob.b2{ background:radial-gradient(70% 70% at 60% 60%, rgba(244,114,182,.4), transparent 60%); animation-duration:16s }
-  .float-blob.b3{ background:radial-gradient(70% 70% at 40% 60%, rgba(103,232,249,.5), transparent 60%); animation-duration:18s }
-  @keyframes orb{
-    0%{ transform: translate(-20px,-20px) scale(1) }
-    50%{ transform: translate(40px,10px) scale(1.08) }
-    100%{ transform: translate(-20px,-20px) scale(1) }
+  /* Floating emoji penguin to keep your vibe :) */
+  #chibi{
+    position:fixed; left:20vw; top:30vh; z-index:9999; font-size:44px; line-height:1; will-change:transform;
+    user-select:none; -webkit-user-drag:none;
   }
 
   /* Respect reduced motion */
-  @media (prefers-reduced-motion: reduce){
-    .spin-logo, .marquee, .glow-border::before, .float-blob, #fx { animation: none !important }
+  @media (prefers-reduced-motion:reduce){
+    .marquee .track, .logo-spin, .hero__overlay{animation:none}
   }
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <div class="hero__bg"></div>
-  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="hero__overlay" aria-hidden="true"></div>
 
-  <div class="hero__inner">
-    <div class="spin-logo" aria-hidden="true"></div>
-    <span class="badge">Fan-Made Portal</span>
-    <h1 class="title">RAID: Shadow Legends</h1>
-    <p class="kicker">Assemble legendary Champions, crush Dungeons, and flex your squad’s drip.
-      Pure spectacle. Zero chill.</p>
+  <div class="hero__inner container">
+    <div class="logo-spin glow" aria-hidden="true"></div>
+    <span class="badge">Los Santos — Fan Project</span>
+    <h1 class="title-grad">Los Santos Mod Lab</h1>
+    <p>Builds, memes, and min-maxing mayhem. Street races at midnight, heists at dawn, spreadsheets in between.</p>
     <div class="cta">
-      <a class="btn btn--primary" href="#champions">View Champions</a>
-      <a class="btn" href="#features">Why It Slaps</a>
-      <a class="btn" href="#play">Play Now</a>
+      <a class="btn" href="#metrics">Stats & Graphs</a>
+      <a class="btn" href="#roster">Crew Roster</a>
+      <a class="btn" href="#play">Get the Toolkit</a>
+    </div>
+  </div>
+
+  <!-- marquee of city/race/heist vibes -->
+  <div class="marquee">
+    <div class="track">
+      <div class="slide"><img src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Vinewood Nights</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Arcade HQ</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Muscle Build</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Heist Prep</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1511910849309-d33e1f7a0f17?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">LS Nights</div></div>
+
+      <!-- repeat for seamless -->
+      <div class="slide"><img src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Vinewood Nights</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Arcade HQ</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Muscle Build</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">Heist Prep</div></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1511910849309-d33e1f7a0f17?auto=format&fit=crop&w=1200&q=80" alt=""><div class="label">LS Nights</div></div>
+    </div>
+  </div>
+</header>
+
+<main id="metrics" class="metrics container">
+  <div class="row">
+    <!-- KPIs -->
+    <div class="kpis" style="flex:1 1 680px">
+      <div class="kpi glass">
+        <h3>Heist Success Rate</h3>
+        <div class="bar-wrap"><div class="bar teal" style="width:0%"></div></div>
+        <p style="margin:.6rem 0 0; color:var(--muted)"><strong id="kpi1">0%</strong> this week</p>
+      </div>
+      <div class="kpi glass">
+        <h3>Average Take (per Job)</h3>
+        <div class="bar-wrap"><div class="bar gold" style="width:0%"></div></div>
+        <p style="margin:.6rem 0 0; color:var(--muted)">$<strong id="kpi2">0</strong></p>
+      </div>
+      <div class="kpi glass">
+        <h3>Arcade Income</h3>
+        <div class="bar-wrap"><div class="bar vio" style="width:0%"></div></div>
+        <p style="margin:.6rem 0 0; color:var(--muted)">$<strong id="kpi3">0</strong> / hour</p>
+      </div>
+      <div class="kpi glass">
+        <h3>Car Meet Attendance</h3>
+        <div class="bar-wrap"><div class="bar pink" style="width:0%"></div></div>
+        <p style="margin:.6rem 0 0; color:var(--muted)"><strong id="kpi4">0</strong> drivers</p>
+      </div>
     </div>
 
-    <div class="stats">
-      <div class="stat glow-border"><div class="num" data-count="500">0</div><div class="lab">Champions</div></div>
-      <div class="stat glow-border"><div class="num" data-count="24">0</div><div class="lab">Dungeons</div></div>
-      <div class="stat glow-border"><div class="num" data-count="12">0</div><div class="lab">Factions</div></div>
+    <!-- Mini Loader (swap between two bars) -->
+    <div class="mini-loader glass" style="flex:1 1 280px">
+      <div class="swap">loading…swap</div>
+      <h4>Network Job Queue</h4>
+      <div class="load-rail"><div class="load-bar" id="barA"></div></div>
+      <div class="mini-inner">
+        <div class="load-rail"><div class="load-bar2" id="barB"></div></div>
+      </div>
+      <p style="margin:.6rem 0 0; color:var(--muted); font-size:.85rem">Heist servers balancing — bars alternate every cycle.</p>
     </div>
+  </div>
 
-    <div class="carousel">
-      <div class="track marquee" id="marq">
-        <!-- Duplicate set for seamless scroll -->
-        <div class="slides" style="display:flex;gap:16px">
-          <!-- Replace thumbnails with your images -->
-          <div class="slide"><img src="images/raid1.jpg" alt=""><div class="label">Arena Clutch</div></div>
-          <div class="slide"><img src="images/raid2.jpg" alt=""><div class="label">Dungeon Speedrun</div></div>
-          <div class="slide"><img src="images/raid3.jpg" alt=""><div class="label">Clan Boss</div></div>
-          <div class="slide"><img src="images/raid4.jpg" alt=""><div class="label">Fusion Hype</div></div>
-          <div class="slide"><img src="images/raid5.jpg" alt=""><div class="label">Shard Luck?</div></div>
+  <!-- CHARTS -->
+  <section class="charts">
+    <div class="chart-wrap">
+      <div class="glass" style="padding:12px"><canvas id="barChart" height="320"></canvas></div>
+      <div class="glass" style="padding:12px"><canvas id="lineChart" height="320"></canvas></div>
+    </div>
+  </section>
+</main>
 
-          <div class="slide"><img src="images/raid1.jpg" alt=""><div class="label">Arena Clutch</div></div>
-          <div class="slide"><img src="images/raid2.jpg" alt=""><div class="label">Dungeon Speedrun</div></div>
-          <div class="slide"><img src="images/raid3.jpg" alt=""><div class="label">Clan Boss</div></div>
-          <div class="slide"><img src="images/raid4.jpg" alt=""><div class="label">Fusion Hype</div></div>
-          <div class="slide"><img src="images/raid5.jpg" alt=""><div class="label">Shard Luck?</div></div>
+<section id="roster" class="section container">
+  <h2>Crew Roster — GTA-Inspired</h2>
+  <p class="sub">Hover a card to flip. Art is royalty-free “street/city” fantasy placeholders.</p>
+  <div class="grid">
+    <!-- Michael-like strategist -->
+    <div class="card">
+      <div class="flip">
+        <div class="face front">
+          <img src="https://images.unsplash.com/photo-1542206395-9feb3edaa68e?auto=format&fit=crop&w=1200&q=80" alt="">
+          <div class="meta">
+            <div class="name">The Planner</div>
+            <div class="tags">Heists • Strategy • Negotiation</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="copy">Sets routes, calls audibles mid-job, and keeps the crew cool. Loves classic sedans and quiet exits.</div>
+          <div class="actions"><a class="btn" href="#play">Loadout</a><a class="btn" href="#play">Notes</a></div>
+        </div>
+      </div>
+    </div>
+    <!-- Franklin-like driver -->
+    <div class="card">
+      <div class="flip">
+        <div class="face front">
+          <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80" alt="">
+          <div class="meta">
+            <div class="name">The Wheelman</div>
+            <div class="tags">Drifting • Pursuit Evades • Street Races</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="copy">Threading traffic at 140 mph. Prefers all-wheel drive for heist getaways; keeps spare tires in the arcade.</div>
+          <div class="actions"><a class="btn" href="#play">Cars</a><a class="btn" href="#play">Racing Lines</a></div>
+        </div>
+      </div>
+    </div>
+    <!-- Trevor-like chaos -->
+    <div class="card">
+      <div class="flip">
+        <div class="face front">
+          <img src="https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=1200&q=80" alt="">
+          <div class="meta">
+            <div class="name">The Wildcard</div>
+            <div class="tags">Explosives • Improvisation • Helicopters</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="copy">If it can detonate, it will. Also somehow best helicopter pilot on the west coast.</div>
+          <div class="actions"><a class="btn" href="#play">Boom Kit</a><a class="btn" href="#play">Flight Log</a></div>
+        </div>
+      </div>
+    </div>
+    <!-- Hacker -->
+    <div class="card">
+      <div class="flip">
+        <div class="face front">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" alt="">
+          <div class="meta">
+            <div class="name">The Hacker</div>
+            <div class="tags">Terminals • Door Bypass • Drones</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="copy">Elevator overrides, vault puzzles, and drone recon. Keeps a thermal charge for emergencies.</div>
+          <div class="actions"><a class="btn" href="#play">Scripts</a><a class="btn" href="#play">Routes</a></div>
+        </div>
+      </div>
+    </div>
+    <!-- Sniper -->
+    <div class="card">
+      <div class="flip">
+        <div class="face front">
+          <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1200&q=80" alt="">
+          <div class="meta">
+            <div class="name">Overwatch</div>
+            <div class="tags">Scopes • Rooftops • Cover Fire</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="copy">Picks angles, calls targets, and spots heat. Spends too much time on rooftop snack breaks.</div>
+          <div class="actions"><a class="btn" href="#play">Angles</a><a class="btn" href="#play">Gear</a></div>
+        </div>
+      </div>
+    </div>
+    <!-- Fixer -->
+    <div class="card">
+      <div class="flip">
+        <div class="face front">
+          <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80" alt="">
+          <div class="meta">
+            <div class="name">The Fixer</div>
+            <div class="tags">Disguises • Plates • Paperwork</div>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="copy">Sourcing outfits, decoy plates, and last-minute alibis. Knows every back alley in La Puerta.</div>
+          <div class="actions"><a class="btn" href="#play">Kits</a><a class="btn" href="#play">Contacts</a></div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- soft floating blobs -->
-  <div class="float-blob" style="top:12%;left:8%"></div>
-  <div class="float-blob b2" style="bottom:14%;right:10%"></div>
-  <div class="float-blob b3" style="top:20%;right:35%"></div>
-</header>
-
-<main>
-
-  <section id="features" class="section">
-    <h2>It’s Loud. It’s Glossy. It’s RAID.</h2>
-    <p class="sub">Everything here wiggles, pulses, or glows—because why not.</p>
-    <div class="features">
-      <div class="feat glow-border">
-        <span class="badge" style="background:linear-gradient(135deg,var(--teal),#b8fff8)">Speed Tuning</span>
-        <h3>Turn-Meter Tango</h3>
-        <p>Master the delicate ballet of speed auras, boosts, and TM manipulation. It’s math, but make it dramatic.</p>
-        <a class="btn" href="#play">See Builds</a>
-      </div>
-      <div class="feat glow-border">
-        <span class="badge" style="background:linear-gradient(135deg,#fda4af,#fecaca)">Shard Science</span>
-        <h3>Gacha Psychology</h3>
-        <p>Pity timers, 2x bait, and your cousin’s “guaranteed” method. We chart it, we meme it, we suffer together.</p>
-        <a class="btn" href="#play">Open Shards</a>
-      </div>
-      <div class="feat glow-border">
-        <span class="badge" style="background:linear-gradient(135deg,#c4b5fd,#a78bfa)">Dungeon Drip</span>
-        <h3>Style Points Matter</h3>
-        <p>Who needs optimal stats when the fit is immaculate? (You do. But the fit still slaps.)</p>
-        <a class="btn" href="#play">Farm Gear</a>
-      </div>
+<section id="play" class="cta-bar container glass">
+  <div style="display:flex;align-items:center;gap:.8rem;flex:1 1 340px">
+    <div class="logo-spin" style="width:52px;height:52px;box-shadow:none"></div>
+    <div>
+      <strong style="font-size:1.1rem">Grab the Toolkit</strong>
+      <div style="color:var(--muted);font-size:.95rem">Configs, routes, and overlays to make your jobs silky.</div>
     </div>
-  </section>
-
-  <section id="champions" class="section">
-    <h2>Spotlight Champions</h2>
-    <p class="sub">Hover to flip. Replace art with your own screenshots/renders.</p>
-    <div class="grid">
-      <!-- CARD 1 -->
-      <div class="card">
-        <div class="flip">
-          <div class="face front">
-            <img src="images/champ1.jpg" alt="Champion 1">
-            <div class="meta"><div class="name">Coldheart</div><div class="tags">Dark Elves • Epic • DMG MAX HP</div></div>
-          </div>
-          <div class="face back">
-            <div class="copy">
-              Heartseeker deletes Boss HP bars, and we respect that. Stack enough ACC and speed tune for Dungeon melt.
-            </div>
-            <div class="actions">
-              <a class="btn btn--primary" href="#play">Build</a>
-              <a class="btn" href="#play">Guide</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- CARD 2 -->
-      <div class="card">
-        <div class="flip">
-          <div class="face front">
-            <img src="images/champ2.jpg" alt="Champion 2">
-            <div class="meta"><div class="name">Kael</div><div class="tags">Dark Elves • Rare • Poison God</div></div>
-          </div>
-          <div class="face back">
-            <div class="copy">
-              Starter? Yes. Relevant forever? Also yes. Poison stacks carry you across half the game.
-            </div>
-            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
-          </div>
-        </div>
-      </div>
-      <!-- CARD 3 -->
-      <div class="card">
-        <div class="flip">
-          <div class="face front">
-            <img src="images/champ3.jpg" alt="Champion 3">
-            <div class="meta"><div class="name">Arbiter</div><div class="tags">High Elves • Void • Speed Queen</div></div>
-          </div>
-          <div class="face back">
-            <div class="copy">
-              TM boost, revive, and aura that makes Arena turn-1 teams sing. Protect at all costs.
-            </div>
-            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
-          </div>
-        </div>
-      </div>
-      <!-- CARD 4 -->
-      <div class="card">
-        <div class="flip">
-          <div class="face front">
-            <img src="images/champ4.jpg" alt="Champion 4">
-            <div class="meta"><div class="name">Ursuga</div><div class="tags">Barbarians • Legendary • Wall</div></div>
-          </div>
-          <div class="face back">
-            <div class="copy">
-              Reduces damage like it’s a hobby. Perfect anchor for Arena Def and Hydra shenanigans.
-            </div>
-            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
-          </div>
-        </div>
-      </div>
-      <!-- CARD 5 -->
-      <div class="card">
-        <div class="flip">
-          <div class="face front">
-            <img src="images/champ5.jpg" alt="Champion 5">
-            <div class="meta"><div class="name">Seer</div><div class="tags">Orcs • Epic • Buff Nuke</div></div>
-          </div>
-          <div class="face back">
-            <div class="copy">
-              If your buffs disappear and everything else does too—that’s Seer. Speed tune carefully, profit immensely.
-            </div>
-            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
-          </div>
-        </div>
-      </div>
-      <!-- CARD 6 -->
-      <div class="card">
-        <div class="flip">
-          <div class="face front">
-            <img src="images/champ6.jpg" alt="Champion 6">
-            <div class="meta"><div class="name">Geomancer</div><div class="tags">Dwarves • Epic • Boss Delete</div></div>
-          </div>
-          <div class="face back">
-            <div class="copy">
-              Reflects Boss damage back like a mirror of spite. A Hydra and CB menace.
-            </div>
-            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="play" class="cta-bar glow-border">
-    <div style="display:flex;align-items:center;gap:.8rem;flex:1 1 340px">
-      <div class="spin-logo" style="width:52px;height:52px;box-shadow:none"></div>
-      <div>
-        <strong style="font-size:1.1rem">Ready to Raid?</strong>
-        <div style="color:var(--muted);font-size:.95rem">Join a Clan, pull some shards, and enable notifications you’ll definitely regret.</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:.6rem">
-      <a class="btn btn--primary" href="#">Download</a>
-      <a class="btn" href="#">Patch Notes</a>
-    </div>
-  </section>
-
-</main>
+  </div>
+  <div style="display:flex;gap:.6rem">
+    <a class="btn" href="#">Download</a>
+    <a class="btn" href="#">Patch Notes</a>
+  </div>
+</section>
 
 <footer>
-  Fan content &copy; You. RAID: Shadow Legends is a trademark of its respective owners. This site is not affiliated with or endorsed by the publisher.
+  GTA-style fan site. Not affiliated with or endorsed by any publisher. Images courtesy of Unsplash creators.
 </footer>
 
-<script>
-/* ========= Sparkle/particle canvas ========= */
-(function(){
-  const c = document.getElementById('fx'), ctx = c.getContext('2d');
-  let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-  function size(){ c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
-  size(); addEventListener('resize', size);
-  const N = 80, P = [];
-  for(let i=0;i<N;i++){
-    P.push({
-      x: Math.random()*innerWidth,
-      y: Math.random()*innerHeight*.8+20,
-      r: Math.random()*2+0.5,
-      vx: (Math.random()-.5)*0.3,
-      vy: Math.random()*.6+.2,
-      h: Math.random()*360
-    });
-  }
-  function tick(){
-    ctx.clearRect(0,0,innerWidth,innerHeight);
-    for(const p of P){
-      p.x += p.vx; p.y += p.vy;
-      if(p.x<-20) p.x=innerWidth+20; if(p.x>innerWidth+20) p.x=-20;
-      if(p.y>innerHeight) { p.y = -10; p.x = Math.random()*innerWidth; }
-      ctx.beginPath();
-      const grad = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
-      grad.addColorStop(0, `hsla(${p.h},100%,70%,.9)`);
-      grad.addColorStop(1, `hsla(${p.h},100%,70%,0)`);
-      ctx.fillStyle = grad;
-      ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2);
-      ctx.fill();
-      p.h += .4;
-    }
-    requestAnimationFrame(tick);
-  }
-  tick();
-})();
+<!-- Floating penguin emoji for signature chaos -->
+<div id="chibi" aria-hidden="true">🐧</div>
 
-/* ========= Count-up stats ========= */
+<script>
+/* ===== KPI fill + counters ===== */
 (function(){
-  const els = document.querySelectorAll('.num');
+  const targets = [
+    { id:'kpi1', pct: 86 },
+    { id:'kpi2', money: 387450 },
+    { id:'kpi3', money: 14600 },
+    { id:'kpi4', num: 53 }
+  ];
+  const bars = document.querySelectorAll('.bar');
+  const ids = ['kpi1','kpi2','kpi3','kpi4'];
+
   const obs = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
       if(e.isIntersecting){
-        const el = e.target, target = +el.dataset.count;
-        let cur = 0, step = Math.max(1, Math.round(target/90));
-        const id = setInterval(()=>{
-          cur += step; if(cur>=target){ cur=target; clearInterval(id); }
-          el.textContent = cur.toLocaleString();
-        }, 16);
-        obs.unobserve(el);
+        // animate bars
+        bars[0].style.width = targets[0].pct + '%';
+        bars[1].style.width = '72%';
+        bars[2].style.width = '64%';
+        bars[3].style.width = '91%';
+        // count-ups
+        let v1=0; const t1=targets[0].pct; const i1=setInterval(()=>{ v1+=2; if(v1>=t1){v1=t1;clearInterval(i1)}; document.getElementById('kpi1').textContent=v1+'%'; }, 20);
+        let v2=0; const t2=targets[1].money; const i2=setInterval(()=>{ v2+=5500; if(v2>=t2){v2=t2;clearInterval(i2)}; document.getElementById('kpi2').textContent=v2.toLocaleString(); }, 16);
+        let v3=0; const t3=targets[2].money; const i3=setInterval(()=>{ v3+=220; if(v3>=t3){v3=t3;clearInterval(i3)}; document.getElementById('kpi3').textContent=v3.toLocaleString(); }, 16);
+        let v4=0; const t4=targets[3].num;   const i4=setInterval(()=>{ v4+=2; if(v4>=t4){v4=t4;clearInterval(i4)}; document.getElementById('kpi4').textContent=v4.toLocaleString(); }, 20);
+
+        obs.disconnect();
       }
-    });
-  }, {threshold:.5});
-  els.forEach(el=>obs.observe(el));
+    })
+  }, {threshold:.4});
+  obs.observe(document.querySelector('.metrics'));
 })();
 
-/* ========= Pause marquee on hover ========= */
-document.getElementById('marq').addEventListener('mouseenter', e=>{
-  e.currentTarget.style.animationPlayState = 'paused';
+/* ===== Canvas charts (bar + line) ===== */
+(function(){
+  const barC = document.getElementById('barChart').getContext('2d');
+  const lineC= document.getElementById('lineChart').getContext('2d');
+  const W = barC.canvas.width = barC.canvas.clientWidth * window.devicePixelRatio;
+  const H = barC.canvas.height= 320 * window.devicePixelRatio;
+  lineC.canvas.width = lineC.canvas.clientWidth * window.devicePixelRatio;
+  lineC.canvas.height= 320 * window.devicePixelRatio;
+  barC.setTransform(window.devicePixelRatio,0,0,window.devicePixelRatio,0,0);
+  lineC.setTransform(window.devicePixelRatio,0,0,window.devicePixelRatio,0,0);
+
+  // Bar chart: payout per heist type
+  const labels = ['Fleeca','Pacific','Casino','Cayo','Doomsday','Union'];
+  const data   = [120, 450, 1050, 1500, 900, 600]; // (in thousands)
+  const cols   = ['#67e8f9','#a78bfa','#f472b6','#ffd166','#b3ff74','#9ad0ff'];
+  const pad = 30, bw = (barC.canvas.clientWidth - pad*2) / data.length * .7, gap = (barC.canvas.clientWidth - pad*2 - bw*data.length)/(data.length-1);
+  const max = Math.max(...data)*1.2, scale = (H/window.devicePixelRatio - 80) / max;
+
+  barC.fillStyle = 'rgba(255,255,255,.75)';
+  barC.font = '12px Segoe UI';
+  labels.forEach((lb,i)=>{
+    const x = pad + i*(bw+gap);
+    const y = (H/window.devicePixelRatio) - 40;
+    const h = data[i] * scale;
+    // bar
+    const grd = barC.createLinearGradient(0,0,0,y);
+    grd.addColorStop(0, cols[i%cols.length]);
+    grd.addColorStop(1, 'rgba(255,255,255,.15)');
+    barC.fillStyle = grd;
+    barC.fillRect(x, y - h, bw, h);
+    // label
+    barC.fillStyle='rgba(255,255,255,.75)';
+    barC.fillText(lb, x, y+14);
+    barC.fillText('$'+data[i]+'k', x, y - h - 6);
+  });
+
+  // Line chart: crew RP over time
+  const months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const rp = [420,480,510,530,600,630,700,720,710,760,790,820];
+  const lw = lineC.canvas.clientWidth, lh = lineC.canvas.clientHeight;
+  const topPad=20, botPad=40, lmax=Math.max(...rp)*1.2, lscale=(lh - topPad - botPad)/lmax, step = (lw-60)/ (rp.length-1);
+
+  lineC.strokeStyle='rgba(103,232,249,.8)';
+  lineC.lineWidth=3; lineC.beginPath();
+  rp.forEach((v,i)=>{
+    const x = 30 + i*step, y = lh - botPad - v*lscale;
+    if(i===0) lineC.moveTo(x,y); else lineC.lineTo(x,y);
+  });
+  lineC.stroke();
+  lineC.fillStyle='rgba(167,139,250,.25)';
+  lineC.beginPath();
+  rp.forEach((v,i)=>{
+    const x = 30 + i*step, y = lh - botPad - v*lscale;
+    if(i===0) lineC.moveTo(x,y); else lineC.lineTo(x,y);
+  });
+  lineC.lineTo(lw-30, lh-botPad); lineC.lineTo(30, lh-botPad); lineC.closePath(); lineC.fill();
+
+  lineC.fillStyle='rgba(255,255,255,.75)'; lineC.font='12px Segoe UI';
+  months.forEach((m,i)=>{ const x=30+i*step; lineC.fillText(m,x-8,lh-20); });
+})();
+
+/* ===== Marquee pause on hover ===== */
+document.querySelector('.marquee .track').addEventListener('mouseenter', e=>{
+  e.currentTarget.style.animationPlayState='paused';
 });
-document.getElementById('marq').addEventListener('mouseleave', e=>{
-  e.currentTarget.style.animationPlayState = 'running';
+document.querySelector('.marquee .track').addEventListener('mouseleave', e=>{
+  e.currentTarget.style.animationPlayState='running';
 });
+
+/* ===== Tiny swap text for mini loader ===== */
+(function(){
+  const swap = document.querySelector('.mini-loader .swap');
+  let onA = true;
+  setInterval(()=>{
+    onA = !onA;
+    swap.textContent = onA ? 'loading…swap' : 'balancing…swap';
+  }, 2200);
+})();
+
+/* ===== Floating penguin (emoji only) ===== */
+(function(){
+  const chibi = document.getElementById('chibi');
+  let x = innerWidth*0.2, y = innerHeight*0.3, size = 44;
+  let vx = 0.85, vy = 0.65, rafId = null;
+  function step(){
+    const w = innerWidth, h = innerHeight;
+    x += vx; y += vy;
+    if (x <= 0){ x = 0; vx = Math.abs(vx); }
+    if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
+    if (y <= 0){ y = 0; vy = Math.abs(vy); }
+    if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
+    chibi.style.transform = `translate(${x}px, ${y}px)`;
+    rafId = requestAnimationFrame(step);
+  }
+  function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
+  function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+  document.addEventListener("visibilitychange", () => document.hidden?stop():start());
+  addEventListener("resize", () => { x=Math.min(x,innerWidth-size); y=Math.min(y,innerHeight-size); });
+  chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.5; vy += (Math.random()-.5)*0.5; });
+  start();
+})();
 </script>
 </body>
 </html>
