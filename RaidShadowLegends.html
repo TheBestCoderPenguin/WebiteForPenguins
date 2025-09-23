@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Raid Shadow Legends — Fan Portal</title>
+<meta name="theme-color" content="#0b0f1a" />
+<style>
+  :root{
+    --bg:#0b0f1a;
+    --bg2:#0e1422;
+    --ink:#e6f0ff;
+    --muted:#a4b1cc;
+    --gold:#ffd166;
+    --teal:#67e8f9;
+    --pink:#f472b6;
+    --vio:#a78bfa;
+    --lime:#bef264;
+    --glow: 0 0 22px rgba(103,232,249,.35), 0 0 44px rgba(167,139,250,.25);
+    --grad: conic-gradient(from 120deg at 50% 50%, #67e8f9, #a78bfa, #f472b6, #ffd166, #67e8f9);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); background: radial-gradient(1200px 600px at 50% -10%, #142036 0%, #0b0f1a 50%) fixed;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    overflow-x:hidden;
+  }
+  a{color:inherit}
+
+  /* =========== Global FX =========== */
+  .glow-border{
+    position:relative; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.03);
+  }
+  .glow-border::before{
+    content:""; position:absolute; inset:-2px; border-radius:inherit; padding:1px;
+    background: var(--grad); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; filter: blur(6px) saturate(120%);
+    opacity:.5; animation: spinSlow 16s linear infinite;
+  }
+  @keyframes spinSlow{ to{ transform: rotate(360deg); } }
+  .btn{
+    display:inline-flex; align-items:center; gap:.6rem; padding:.9rem 1.1rem; border-radius:999px;
+    background:linear-gradient(135deg,#1b2340,#111a2e); color:var(--ink);
+    border:1px solid rgba(255,255,255,.14); text-decoration:none; font-weight:700; letter-spacing:.3px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 12px 24px rgba(0,0,0,.35);
+    transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{ transform: translateY(-2px); filter: brightness(1.05); box-shadow:0 18px 40px rgba(0,0,0,.5); }
+  .btn--primary{ background:linear-gradient(135deg,#10243a,#1a2b4f); border-color: rgba(103,232,249,.5); box-shadow: var(--glow); }
+  .badge{
+    display:inline-block; padding:.35rem .6rem; border-radius:999px; font-size:.75rem; color:#0b0f1a; font-weight:800;
+    background:linear-gradient(135deg,var(--gold),#ffd98f);
+  }
+
+  /* =========== Hero =========== */
+  header.hero{
+    position:relative; min-height:92vh; display:grid; place-items:center; overflow:hidden;
+  }
+  canvas#fx{ position:absolute; inset:0; width:100%; height:100%; }
+  .hero__bg{
+    position:absolute; inset:-20% -10%; background: radial-gradient(60% 60% at 50% 30%, rgba(103,232,249,.25), transparent 60%),
+      radial-gradient(40% 30% at 20% 70%, rgba(244,114,182,.2), transparent 60%),
+      radial-gradient(45% 35% at 80% 60%, rgba(167,139,250,.25), transparent 60%);
+    filter:saturate(140%) blur(28px); animation: drift 20s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    0%{transform:translateY(-2%) scale(1)}
+    100%{transform:translateY(3%) scale(1.05)}
+  }
+  .hero__inner{ position:relative; z-index:2; padding:2rem; text-align:center; width:min(1100px,92vw); }
+  .spin-logo{
+    width:120px; height:120px; margin:0 auto 1rem; border-radius:50%;
+    background: var(--grad); box-shadow: var(--glow);
+    animation: spinLogo 8s linear infinite;
+  }
+  @keyframes spinLogo{ to{ transform: rotate(360deg); } }
+  h1.title{
+    font-size: clamp(2rem, 6vw, 4.2rem); margin:.3rem 0 .6rem; line-height:1.05;
+    background: linear-gradient(180deg,#e6f0ff,#bcd3ff 50%, #9fb3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-shadow: 0 10px 32px rgba(103,232,249,.2);
+  }
+  p.kicker{ color:var(--muted); max-width:800px; margin:0 auto 1.2rem; font-size:clamp(.95rem,2.2vw,1.1rem) }
+  .cta{ display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; margin-top:1rem }
+
+  /* =========== Counters =========== */
+  .stats{
+    margin-top:1.6rem; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+  }
+  .stat{
+    min-width:180px; padding:1rem 1.2rem; text-align:center; border-radius:14px; background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    transition: transform .2s ease;
+  }
+  .stat:hover{ transform: translateY(-2px); }
+  .stat .num{ font-size:1.8rem; font-weight:900; letter-spacing:.5px; color:#eaf2ff; text-shadow: var(--glow); }
+  .stat .lab{ font-size:.85rem; color:var(--muted) }
+
+  /* =========== Carousel =========== */
+  .carousel{
+    margin:2.2rem auto 0; width:min(1100px,92vw); position:relative;
+  }
+  .track{ display:flex; gap:16px; overflow:hidden; mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent); }
+  .slide{
+    flex:0 0 320px; height:190px; border-radius:16px; position:relative; overflow:hidden;
+    border:1px solid rgba(255,255,255,.08); background:#12192b; box-shadow:0 10px 24px rgba(0,0,0,.35);
+  }
+  .slide img{ width:100%; height:100%; object-fit:cover; opacity:.9; filter:saturate(120%) contrast(1.05) }
+  .slide .label{ position:absolute; bottom:8px; left:10px; padding:.35rem .6rem; border-radius:10px;
+    background:rgba(0,0,0,.45); backdrop-filter: blur(2px); font-weight:800; font-size:.85rem }
+  .marquee{ animation: scrollX 30s linear infinite; }
+  @keyframes scrollX{ to{ transform: translateX(-50%); } }
+
+  /* =========== Section heading =========== */
+  .section{
+    width:min(1100px,92vw); margin: 3rem auto 0; position:relative;
+  }
+  .section h2{
+    font-size: clamp(1.4rem,4vw,2.2rem); margin:0 0 .8rem; letter-spacing:.4px;
+  }
+  .section p.sub{ color:var(--muted); margin:.2rem 0 1.2rem }
+
+  /* =========== Champion Grid =========== */
+  .grid{
+    display:grid; grid-template-columns: repeat(12,1fr); gap:12px;
+  }
+  @media (max-width:1000px){ .grid{ grid-template-columns: repeat(8,1fr); } }
+  @media (max-width:700px){ .grid{ grid-template-columns: repeat(4,1fr); } }
+
+  .card{
+    grid-column: span 4; perspective: 1000px;
+  }
+  .flip{
+    position:relative; height:320px; border-radius:16px; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .card:hover .flip{ transform: rotateY(180deg); }
+  .face{
+    position:absolute; inset:0; border-radius:16px; overflow:hidden; backface-visibility:hidden;
+    border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 28px rgba(0,0,0,.45);
+  }
+  .front{ background:#0f172a; display:grid; place-items:end; }
+  .front img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.9 }
+  .front .meta{ position:relative; z-index:2; width:100%; padding:.6rem .7rem; background:linear-gradient(to top, rgba(0,0,0,.65), transparent); }
+  .front .meta .name{ font-weight:900; letter-spacing:.4px }
+  .front .meta .tags{ font-size:.8rem; color:var(--muted) }
+
+  .back{
+    background: radial-gradient(80% 80% at 50% 50%, rgba(103,232,249,.18), rgba(0,0,0,.5)), #0f172a;
+    transform: rotateY(180deg); display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .back .copy{ padding:1rem; font-size:.95rem; color:#dfe8ff }
+  .back .actions{ display:flex; gap:.6rem; padding:0 1rem 1rem; }
+
+  /* =========== Feature Row =========== */
+  .features{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:1rem; }
+  @media (max-width:900px){ .features{ grid-template-columns: 1fr; } }
+  .feat{
+    padding:1rem; border-radius:16px; background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .feat h3{ margin:.2rem 0 .4rem }
+  .feat p{ margin:.2rem 0 .6rem; color:var(--muted) }
+
+  /* =========== Call to action =========== */
+  .cta-bar{
+    margin:3rem auto; width:min(1100px,92vw); padding:1.2rem; border-radius:16px;
+    background:linear-gradient(90deg, rgba(103,232,249,.08), rgba(167,139,250,.08));
+    border:1px solid rgba(255,255,255,.08); display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  }
+
+  /* =========== Footer =========== */
+  footer{
+    margin-top:2rem; padding:2rem 1rem; background:linear-gradient(180deg, transparent, rgba(255,255,255,.02));
+    color:var(--muted); text-align:center; font-size:.9rem;
+  }
+
+  /* =========== Floating bits =========== */
+  .float-blob{
+    position:absolute; width:180px; height:180px; border-radius:50%;
+    background:radial-gradient(70% 70% at 30% 30%, rgba(255,209,102,.5), transparent 60%);
+    filter: blur(10px); opacity:.4; mix-blend-mode: screen; animation: orb 12s ease-in-out infinite;
+  }
+  .float-blob.b2{ background:radial-gradient(70% 70% at 60% 60%, rgba(244,114,182,.4), transparent 60%); animation-duration:16s }
+  .float-blob.b3{ background:radial-gradient(70% 70% at 40% 60%, rgba(103,232,249,.5), transparent 60%); animation-duration:18s }
+  @keyframes orb{
+    0%{ transform: translate(-20px,-20px) scale(1) }
+    50%{ transform: translate(40px,10px) scale(1.08) }
+    100%{ transform: translate(-20px,-20px) scale(1) }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .spin-logo, .marquee, .glow-border::before, .float-blob, #fx { animation: none !important }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero__bg"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <div class="hero__inner">
+    <div class="spin-logo" aria-hidden="true"></div>
+    <span class="badge">Fan-Made Portal</span>
+    <h1 class="title">RAID: Shadow Legends</h1>
+    <p class="kicker">Assemble legendary Champions, crush Dungeons, and flex your squad’s drip.
+      Pure spectacle. Zero chill.</p>
+    <div class="cta">
+      <a class="btn btn--primary" href="#champions">View Champions</a>
+      <a class="btn" href="#features">Why It Slaps</a>
+      <a class="btn" href="#play">Play Now</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat glow-border"><div class="num" data-count="500">0</div><div class="lab">Champions</div></div>
+      <div class="stat glow-border"><div class="num" data-count="24">0</div><div class="lab">Dungeons</div></div>
+      <div class="stat glow-border"><div class="num" data-count="12">0</div><div class="lab">Factions</div></div>
+    </div>
+
+    <div class="carousel">
+      <div class="track marquee" id="marq">
+        <!-- Duplicate set for seamless scroll -->
+        <div class="slides" style="display:flex;gap:16px">
+          <!-- Replace thumbnails with your images -->
+          <div class="slide"><img src="images/raid1.jpg" alt=""><div class="label">Arena Clutch</div></div>
+          <div class="slide"><img src="images/raid2.jpg" alt=""><div class="label">Dungeon Speedrun</div></div>
+          <div class="slide"><img src="images/raid3.jpg" alt=""><div class="label">Clan Boss</div></div>
+          <div class="slide"><img src="images/raid4.jpg" alt=""><div class="label">Fusion Hype</div></div>
+          <div class="slide"><img src="images/raid5.jpg" alt=""><div class="label">Shard Luck?</div></div>
+
+          <div class="slide"><img src="images/raid1.jpg" alt=""><div class="label">Arena Clutch</div></div>
+          <div class="slide"><img src="images/raid2.jpg" alt=""><div class="label">Dungeon Speedrun</div></div>
+          <div class="slide"><img src="images/raid3.jpg" alt=""><div class="label">Clan Boss</div></div>
+          <div class="slide"><img src="images/raid4.jpg" alt=""><div class="label">Fusion Hype</div></div>
+          <div class="slide"><img src="images/raid5.jpg" alt=""><div class="label">Shard Luck?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- soft floating blobs -->
+  <div class="float-blob" style="top:12%;left:8%"></div>
+  <div class="float-blob b2" style="bottom:14%;right:10%"></div>
+  <div class="float-blob b3" style="top:20%;right:35%"></div>
+</header>
+
+<main>
+
+  <section id="features" class="section">
+    <h2>It’s Loud. It’s Glossy. It’s RAID.</h2>
+    <p class="sub">Everything here wiggles, pulses, or glows—because why not.</p>
+    <div class="features">
+      <div class="feat glow-border">
+        <span class="badge" style="background:linear-gradient(135deg,var(--teal),#b8fff8)">Speed Tuning</span>
+        <h3>Turn-Meter Tango</h3>
+        <p>Master the delicate ballet of speed auras, boosts, and TM manipulation. It’s math, but make it dramatic.</p>
+        <a class="btn" href="#play">See Builds</a>
+      </div>
+      <div class="feat glow-border">
+        <span class="badge" style="background:linear-gradient(135deg,#fda4af,#fecaca)">Shard Science</span>
+        <h3>Gacha Psychology</h3>
+        <p>Pity timers, 2x bait, and your cousin’s “guaranteed” method. We chart it, we meme it, we suffer together.</p>
+        <a class="btn" href="#play">Open Shards</a>
+      </div>
+      <div class="feat glow-border">
+        <span class="badge" style="background:linear-gradient(135deg,#c4b5fd,#a78bfa)">Dungeon Drip</span>
+        <h3>Style Points Matter</h3>
+        <p>Who needs optimal stats when the fit is immaculate? (You do. But the fit still slaps.)</p>
+        <a class="btn" href="#play">Farm Gear</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="champions" class="section">
+    <h2>Spotlight Champions</h2>
+    <p class="sub">Hover to flip. Replace art with your own screenshots/renders.</p>
+    <div class="grid">
+      <!-- CARD 1 -->
+      <div class="card">
+        <div class="flip">
+          <div class="face front">
+            <img src="images/champ1.jpg" alt="Champion 1">
+            <div class="meta"><div class="name">Coldheart</div><div class="tags">Dark Elves • Epic • DMG MAX HP</div></div>
+          </div>
+          <div class="face back">
+            <div class="copy">
+              Heartseeker deletes Boss HP bars, and we respect that. Stack enough ACC and speed tune for Dungeon melt.
+            </div>
+            <div class="actions">
+              <a class="btn btn--primary" href="#play">Build</a>
+              <a class="btn" href="#play">Guide</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- CARD 2 -->
+      <div class="card">
+        <div class="flip">
+          <div class="face front">
+            <img src="images/champ2.jpg" alt="Champion 2">
+            <div class="meta"><div class="name">Kael</div><div class="tags">Dark Elves • Rare • Poison God</div></div>
+          </div>
+          <div class="face back">
+            <div class="copy">
+              Starter? Yes. Relevant forever? Also yes. Poison stacks carry you across half the game.
+            </div>
+            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
+          </div>
+        </div>
+      </div>
+      <!-- CARD 3 -->
+      <div class="card">
+        <div class="flip">
+          <div class="face front">
+            <img src="images/champ3.jpg" alt="Champion 3">
+            <div class="meta"><div class="name">Arbiter</div><div class="tags">High Elves • Void • Speed Queen</div></div>
+          </div>
+          <div class="face back">
+            <div class="copy">
+              TM boost, revive, and aura that makes Arena turn-1 teams sing. Protect at all costs.
+            </div>
+            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
+          </div>
+        </div>
+      </div>
+      <!-- CARD 4 -->
+      <div class="card">
+        <div class="flip">
+          <div class="face front">
+            <img src="images/champ4.jpg" alt="Champion 4">
+            <div class="meta"><div class="name">Ursuga</div><div class="tags">Barbarians • Legendary • Wall</div></div>
+          </div>
+          <div class="face back">
+            <div class="copy">
+              Reduces damage like it’s a hobby. Perfect anchor for Arena Def and Hydra shenanigans.
+            </div>
+            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
+          </div>
+        </div>
+      </div>
+      <!-- CARD 5 -->
+      <div class="card">
+        <div class="flip">
+          <div class="face front">
+            <img src="images/champ5.jpg" alt="Champion 5">
+            <div class="meta"><div class="name">Seer</div><div class="tags">Orcs • Epic • Buff Nuke</div></div>
+          </div>
+          <div class="face back">
+            <div class="copy">
+              If your buffs disappear and everything else does too—that’s Seer. Speed tune carefully, profit immensely.
+            </div>
+            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
+          </div>
+        </div>
+      </div>
+      <!-- CARD 6 -->
+      <div class="card">
+        <div class="flip">
+          <div class="face front">
+            <img src="images/champ6.jpg" alt="Champion 6">
+            <div class="meta"><div class="name">Geomancer</div><div class="tags">Dwarves • Epic • Boss Delete</div></div>
+          </div>
+          <div class="face back">
+            <div class="copy">
+              Reflects Boss damage back like a mirror of spite. A Hydra and CB menace.
+            </div>
+            <div class="actions"><a class="btn btn--primary" href="#play">Build</a><a class="btn" href="#play">Guide</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="play" class="cta-bar glow-border">
+    <div style="display:flex;align-items:center;gap:.8rem;flex:1 1 340px">
+      <div class="spin-logo" style="width:52px;height:52px;box-shadow:none"></div>
+      <div>
+        <strong style="font-size:1.1rem">Ready to Raid?</strong>
+        <div style="color:var(--muted);font-size:.95rem">Join a Clan, pull some shards, and enable notifications you’ll definitely regret.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:.6rem">
+      <a class="btn btn--primary" href="#">Download</a>
+      <a class="btn" href="#">Patch Notes</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Fan content &copy; You. RAID: Shadow Legends is a trademark of its respective owners. This site is not affiliated with or endorsed by the publisher.
+</footer>
+
+<script>
+/* ========= Sparkle/particle canvas ========= */
+(function(){
+  const c = document.getElementById('fx'), ctx = c.getContext('2d');
+  let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  function size(){ c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+  size(); addEventListener('resize', size);
+  const N = 80, P = [];
+  for(let i=0;i<N;i++){
+    P.push({
+      x: Math.random()*innerWidth,
+      y: Math.random()*innerHeight*.8+20,
+      r: Math.random()*2+0.5,
+      vx: (Math.random()-.5)*0.3,
+      vy: Math.random()*.6+.2,
+      h: Math.random()*360
+    });
+  }
+  function tick(){
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    for(const p of P){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<-20) p.x=innerWidth+20; if(p.x>innerWidth+20) p.x=-20;
+      if(p.y>innerHeight) { p.y = -10; p.x = Math.random()*innerWidth; }
+      ctx.beginPath();
+      const grad = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+      grad.addColorStop(0, `hsla(${p.h},100%,70%,.9)`);
+      grad.addColorStop(1, `hsla(${p.h},100%,70%,0)`);
+      ctx.fillStyle = grad;
+      ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2);
+      ctx.fill();
+      p.h += .4;
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ========= Count-up stats ========= */
+(function(){
+  const els = document.querySelectorAll('.num');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const el = e.target, target = +el.dataset.count;
+        let cur = 0, step = Math.max(1, Math.round(target/90));
+        const id = setInterval(()=>{
+          cur += step; if(cur>=target){ cur=target; clearInterval(id); }
+          el.textContent = cur.toLocaleString();
+        }, 16);
+        obs.unobserve(el);
+      }
+    });
+  }, {threshold:.5});
+  els.forEach(el=>obs.observe(el));
+})();
+
+/* ========= Pause marquee on hover ========= */
+document.getElementById('marq').addEventListener('mouseenter', e=>{
+  e.currentTarget.style.animationPlayState = 'paused';
+});
+document.getElementById('marq').addEventListener('mouseleave', e=>{
+  e.currentTarget.style.animationPlayState = 'running';
+});
+</script>
+</body>
+</html>
