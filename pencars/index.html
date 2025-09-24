@@ -1,389 +1,156 @@
 <!DOCTYPE html>
-<html id="top" lang="en">
-  <head>
-    <body style="background-color:#6690B5;"></body>
-    <title>Modded Cars</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Penguin’s Coding Igloo — Gallery</title>
+<style>
+  :root{
+    --accent-gradient: linear-gradient(135deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
+    --bg-dark:#111; --text:#fff; --title-blue:#60a5fa;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{
+    margin:0; padding:0; background:var(--bg-dark); color:var(--text);
+    font-family:"Comic Sans MS","Baloo 2","Fredoka",system-ui,sans-serif;
+    overflow-x:hidden;
+  }
 
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
-    <link rel="stylesheet" href="/index.css" />
-    <!-- import the webpage's javascript file -->
-    <script src="/script.js" defer></script>
-  </head>
+  /* Hero header */
+  .hero{
+    position:sticky; top:0; height:40vh;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    background:url('your-photo-1.jpg') center/cover no-repeat;
+    padding:2rem;
+  }
+  .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:1rem; align-items:center}
+  h1.title{
+    margin:0; font-size:clamp(2rem,6vw,3.2rem); color:var(--title-blue);
+    text-shadow:0 3px 18px rgba(0,0,0,.6);
+  }
+  .sub{margin:0; opacity:.85; font-size:clamp(.95rem,2.2vw,1.05rem)}
 
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      .responsive {
-        width: 100%;
-        height: auto;
-      }
-    </style>
-  </head>
-  <h1>
-    I’m no longer trading or selling. This website is simply a showcase of my cars now and won’t be updated further. Enjoy browsing!
-  </h1>
-<h1>
-  CausticPenguino's Modded Vehicles!
-  </h1>
-    <p>
-      If you are interested in obtaining any of these vehicles, please contact
-      me on Reddit or Xbox One: CausticPenguino
-    </p>
-<p>
-  5$per car - 10$ per plane. Fixed prices.
-  </p>
-    <p>
-      This website is still under construction, if you have any tips or tricks
-      to optimize this, please feel free to share.
-    </p>
-  
-  <h1>
-    If you're interested in a personalized car or aircraft, that can also be
-    arranged.
-  </h1>
-  <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function() {
-        // Add smooth scrolling to all links
-        $("a").on("click", function(event) {
-          // Make sure this.hash has a value before overriding default behavior
-          if (this.hash !== "") {
-            // Prevent default anchor click behavior
-            event.preventDefault();
+  /* Gallery grid */
+  .section{padding:1.5rem 0 2.5rem}
+  .container{width:min(1200px,92vw); margin:0 auto}
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+    gap:14px;
+  }
+  .card{
+    background:rgba(26,26,26,.85);
+    border:2px solid transparent; border-radius:14px; border-image:var(--accent-gradient) 1;
+    overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,.35);
+    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{ transform:translateY(-2px); filter:brightness(1.04); box-shadow:0 16px 34px rgba(0,0,0,.5) }
+  .caption{ padding:.8rem 1rem }
+  .caption a{
+    font-weight:700; color:#fff; text-decoration:none;
+    transition:all .25s ease;
+  }
+  .caption a:hover{
+    background:var(--accent-gradient);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 10px rgba(255,255,255,.6);
+  }
 
-            // Store hash
-            var hash = this.hash;
+  /* Back to home + penguin */
+  #toTop{
+    position:fixed; right:18px; bottom:18px; z-index:1100;
+    display:flex; align-items:center; gap:.5rem;
+    background:#ffffff; color:#111; padding:.6rem .9rem; border-radius:999px; font-weight:800;
+    border:2px solid transparent; border-image:var(--accent-gradient) 1; box-shadow:0 10px 25px rgba(0,0,0,.35);
+  }
+  #chibi{
+    position:fixed; left:20vw; top:30vh; z-index:900;
+    font-size:44px; line-height:1; will-change:transform; user-select:none; -webkit-user-drag:none;
+  }
+</style>
+</head>
+<body>
+  <section class="hero" id="top">
+    <div class="stack">
+      <h1 class="title">Penguin’s Coding Igloo</h1>
+      <p class="sub">Gallery of goofy projects & experiments</p>
+    </div>
+  </section>
 
-            // Using jQuery's animate() method to add smooth page scroll
-            // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
-            $("html, body").animate(
-              {
-                scrollTop: $(hash).offset().top
-              },
-              800,
-              function() {
-                // Add hash (#) to URL when done scrolling (default click behavior)
-                window.location.hash = hash;
-              }
-            );
-          } // End if
-        });
-      });
-    </script>
-  </head>
+  <section class="section">
+    <div class="container">
+      <div class="grid" id="gallery"></div>
+    </div>
+  </section>
 
-  <h1>
-    ...
-    <a href="contents.html">Click to view the list of cars</a>
+  <!-- Back/Home -->
+  <a id="toTop" href="index.html" title="Back to Home"><span class="emoji">🐧</span> Home</a>
+  <div id="chibi">🐧</div>
 
-    ...
-  </h1>
-     <h1>
-    <a href="special.html">Special Vehicles</a>
-  </h1>
-  
+<script>
+/* Reuse BUTTONS list from index */
+const BUTTONS = [
+  { label: "GTAV Modded Cars Showcase (pencars)", href: "pencars/index.html" },
+  { label: "Random GTA Website", href: "RaidShadowLegends.html" },
+  { label: "Discord Bot", href: "discord-bot.html" },
+  { label: "HTML Hackscreen", href: "hack.html" },
+  { label: "Marvel Rivals Stats", href: "marvel.html" },
+  { label: "Cookie Clicker Mod", href: "cookie.html" },
+  { label: "ASCII Toys", href: "ascii.html" },
+  { label: "Rainbow Fire GIF", href: "rainbow-fire.html" },
+  { label: "Penguin Banner", href: "gfx-penguin-banner.html" },
+  { label: "Pride Gradients", href: "gradients.html" },
+  { label: "Penguin Igloo UI", href: "ui-igloo.html" },
+  { label: "Robux Meme UI", href: "robux.html" },
+  { label: "Desktop Messenger", href: "messenger.html" },
+  { label: "Waitlist Mock", href: "waitlist.html" },
+  { label: "V/VI Logo Lab", href: "logo-lab.html" },
+  { label: "Tiny Utilities", href: "utils.html" },
+  { label: "Gradient Maker", href: "gradient-maker.html" },
+  { label: "LS Airport Sign", href: "lsia-sign.html" },
+  { label: "Waldo Horror", href: "waldo-horror.html" },
+  { label: "Penguin Emojis", href: "penguin-emojis.html" },
+  { label: "Pong Leaderboard", href: "pong.html" },
+  { label: "Heist Bible", href: "heist-bible.html" },
+  { label: "Tag Generator", href: "tag-generator.html" },
+  { label: "Penguin Stickers", href: "stickers.html" },
+  { label: "Random Toy", href: "toy.html" }
+];
 
-  <h>All cars are modded unless stated otherwise.</h>
-  
-  
-  <h1>
-    <body>
-      <a href="planes.html">To View The Modded Aircrafts Click Here</a>
-    </body>
-  </h1>
+const grid = document.getElementById('gallery');
+grid.innerHTML = BUTTONS.map(b=>`
+  <article class="card">
+    <div class="caption">
+      <a href="${b.href}" target="_blank" rel="noopener noreferrer">${b.label}</a>
+    </div>
+  </article>
+`).join('');
 
-  <body>
-    <p>
-      If you click on the names of the garages you get an indepth view of all
-      the cars
-    </p>
-    <h1>
-      <a href="office1.html">Office Garage 1</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1A.JPG?v=1588172282741"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1B.JPG?v=1588172283508"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1C.JPG?v=1588172290293"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-  </body>
-
-  <body>
-    <h1>
-      <a href="office2.html">Office Garage 2</a>
-    </h1>
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2A.JPG?v=1588172569058"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2B.JPG?v=1588172571406"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2c.PNG?v=1588172573918"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-  </body>
-
-  <body>
-    <h1>
-      <body>
-        <a href="office3.html">Office Garage 3</a>
-      </body>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3A.JPG?v=1588172835522"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3B.JPG?v=1588172832332"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3C.JPG?v=1588172833700"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-  </body>
-
-  <body>
-    <h1>Generic Garages</h1>
-
-    <h1>
-      <a href="NorthConker.html">2044 North Conker Ave:</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1515.JPG?v=1588173511222"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-
-    <h1>
-      <h1>
-        <a href="SupplyStreet.html">331 Supply St</a>
-      </h1>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1573.JPG?v=1588294802680"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-    <h1>
-      <a href="/MurrietaHeights.html">Murrieta Heights</a>
-    </h1>
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1536.JPG?v=1588173514300"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-    <h1>
-      <a href="/EclipseP.html">Eclipse, Penthouse Suite 3</a>
-    </h1>
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1546.JPG?v=1588190588457"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-
-    <h1>
-      <a href="Exceptionalists.html">Exceptionalists Way</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1544.JPG?v=1588190577038"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-
-    <h1>
-      <a href="GreenParkWay.html">Greenwhich Parkway</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1545.JPG?v=1588190578258"
-      alt="Smiley face"
-      width="1300"
-      height="800"
-      class="responsive"
-    />
-  </body>
-
-  <body>
-    <h1>
-      <a href="Nightclub.html">Nightclub</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FNightclub1.JPG?v=1588173150987"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Fnightclub2.JPG?v=1588173151067"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-  </body>
-
-  <body>
-    <h1>
-      <a href="Facility.html">Facility</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Ffacility1.JPG?v=1588173263077"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Ffacility%202.JPG?v=1588173263750"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-  </body>
-
-  <body>
-    <h1>
-      <a href="Penthouse.html">Penthouse</a>
-    </h1>
-
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Fpenthouse%201.JPG?v=1588173250228"
-      alt="Smiley face"
-      class="responsive"
-      width="1300"
-      height="900"
-    />
-    <img
-      src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1574.JPG?v=1588294799618"
-      alt="Smiley face"
-      width="1300"
-      height="900"
-      class="responsive"
-    />
-  </body>
-  <div class="main" id="section2"></div>
-
-  <body>
-    <body>
-      <h1>
-        <a href="arena1.html">Arena Workshop</a>
-      </h1>
-
-      <iframe
-        width="1300"
-        height="800"
-        src="https://www.youtube.com/embed/KoThppdx5AI"
-        class="responsive"
-        frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      ></iframe>
-
-      <h1>
-        <a href="arena2.html">Arena Basement 2</a>
-      </h1>
-
-      <iframe
-        width="1300"
-        height="800"
-        src="https://www.youtube.com/embed/5G0ww_5iobM"
-        class="responsive"
-        frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      ></iframe>
-
-      <h1>
-        <a href="arena3.html">Arena Basement 3</a>
-      </h1>
-    </body>
-    <body>
-      <iframe
-        width="1300"
-        height="800"
-        src="https://www.youtube.com/embed/ehvYRgwfVn4"
-        class="responsive"
-        frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      ></iframe>
-    </body>
-    <p>
-      If you want to trade let me know either on Reddit or Xbox One
-      (CausticPenguino)
-    </p>
-
-    <p>
-      Every time I obtain a new car, this website will be updated accordingly.
-    </p>
-    <body>
-      <!-- the entire document -->
-      <a href="#top">---Jump to top of page---</a>
-    </body>
-
-    <div class="main" id="section1"></div>
-
-    
-  </body>
+/* Floating penguin */
+const chibi = document.getElementById("chibi");
+let x = window.innerWidth * 0.2, y = window.innerHeight * 0.3, size = 44;
+let vx = 0.85, vy = 0.65, rafId = null;
+function step(){
+  const w = window.innerWidth, h = window.innerHeight;
+  x += vx; y += vy;
+  if (x <= 0){ x = 0; vx = Math.abs(vx); }
+  if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
+  if (y <= 0){ y = 0; vy = Math.abs(vy); }
+  if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
+  chibi.style.transform = `translate(${x}px, ${y}px)`;
+  rafId = requestAnimationFrame(step);
+}
+function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
+function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+document.addEventListener("visibilitychange", () => document.hidden?stop():start());
+addEventListener("resize", () => {
+  x = Math.min(x, innerWidth - size);
+  y = Math.min(y, innerHeight - size);
+});
+chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.5; vy += (Math.random()-.5)*0.5; });
+start();
+</script>
+</body>
 </html>
