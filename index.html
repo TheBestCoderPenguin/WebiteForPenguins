@@ -17,11 +17,13 @@
     overflow-x:hidden;
   }
 
-  /* ===== Single sticky hero ===== */
+  /* ===== Single sticky hero (adds gradient overlay so it's never "empty") ===== */
   .hero{
     position:sticky; top:0; height:85vh;
     display:flex; align-items:center; justify-content:center; text-align:center;
-    background:url('your-photo-1.jpg') center/cover no-repeat;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)),
+      url('your-photo-1.jpg') center/cover no-repeat;
     padding:2rem;
   }
   .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:1rem; align-items:center}
@@ -46,7 +48,7 @@
     margin:0; font-size:clamp(1.15rem,3vw,1.6rem); line-height:1.1;
     background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
   }
-  .about-header a{ display:inline-block; line-height:0; border-radius:12px } /* wrap for clickable icons */
+  .about-header a{ display:inline-block; line-height:0; border-radius:12px }
   .about-icon{
     width:clamp(34px,6vw,52px); height:clamp(34px,6vw,52px); object-fit:cover; border-radius:10px;
     border:2px solid transparent; border-image:var(--accent-gradient) 1; background:#222;
@@ -74,7 +76,7 @@
     .about-header h2{order:1; width:100%}
   }
 
-  /* ===== Buttons (moved up; cleaner spacing) ===== */
+  /* ===== Buttons ===== */
   .section{padding:1.5rem 0 2.5rem}
   .section .container{width:min(1100px,92vw); margin:0 auto}
   .grid-title{
@@ -127,16 +129,24 @@
       <h1 class="title">Penguin’s Coding Igloo</h1>
       <article class="about-card">
         <header class="about-header">
-          <!-- Left icon → HeistTeams -->
+          <!-- Left icon → HeistTeams (with robust fallback) -->
           <a class="about-left" href="https://discord.gg/heistteams" target="_blank" rel="noopener noreferrer" aria-label="HeistTeams Discord">
-            <img class="about-icon" src="images/heist-teams.jpg" alt="HeistTeams artwork" loading="lazy" decoding="async" />
+            <img class="about-icon"
+                 src="images/heist-teams.jpg"
+                 alt="HeistTeams artwork"
+                 loading="lazy" decoding="async"
+                 onerror="this.onerror=null; this.src='images/heist-teams.png';">
           </a>
 
           <h2>About Me</h2>
 
-          <!-- Right icon → Epsilon Flight Program -->
+          <!-- Right icon → Epsilon Flight Program (with robust fallback) -->
           <a class="about-right" href="https://discord.gg/bqJ6whRV" target="_blank" rel="noopener noreferrer" aria-label="Epsilon Flight Program Discord">
-            <img class="about-icon" src="images/epsilon-stitched.svg" alt="Epsilon Program stitched patch" loading="lazy" decoding="async" />
+            <img class="about-icon"
+                 src="images/epsilon-stitched.svg"
+                 alt="Epsilon Program stitched patch"
+                 loading="lazy" decoding="async"
+                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,&lt;svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27&gt;&lt;rect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23122c5a%27/&gt;&lt;text x=%2732%27 y=%2738%27 font-size=%2730%27 text-anchor=%27middle%27 fill=%27%23fff%27&gt;Ɛ&lt;/text&gt;&lt;/svg&gt;';">
           </a>
         </header>
 
@@ -177,7 +187,7 @@
     "#fef08a","#a5b4fc","#f472b6","#d8b4fe","#f87171"
   ];
 
-  /* ===== PROJECT BUTTONS (set destinations here) ===== */
+  /* ===== PROJECT BUTTONS (exact names + links kept) ===== */
   const BUTTONS = [
     { label: "GTAV Modded Cars Showcase (pencars)", href: "pencars/index.html" },
     { label: "Random GTA Website", href: "RaidShadowLegends.html" },
@@ -206,16 +216,17 @@
     { label: "Random Toy", href: "toy.html" }
   ];
 
-  /* ===== Build the grid ===== */
+  /* ===== Build the grid (never rename labels; fall back to filename if missing) ===== */
   const grid = document.getElementById("buttonGrid");
   BUTTONS.forEach((b,i)=>{
     const btn = document.createElement("button");
     btn.className = "btn";
-    btn.textContent = b.label;
+    const label = (b.label && String(b.label).trim()) || (b.href ? b.href.split('/').pop() : "Link");
+    btn.textContent = label;
     btn.style.backgroundColor = PASTELS[i % PASTELS.length];
     btn.addEventListener("click", () => {
       if (b.href && b.href !== "#") window.location.href = b.href;
-      else alert(b.label);
+      else alert(label);
     });
     grid.appendChild(btn);
   });
