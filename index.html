@@ -4,71 +4,61 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Penguin’s Coding Igloo</title>
+<meta name="color-scheme" content="dark">
 <style>
   :root{
     --accent-gradient: linear-gradient(135deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
-    --bg-dark:#111; --text:#fff; --title-blue:#60a5fa;
+    --bg-dark:#0e0e10; --panel:#141418; --text:#fff; --title-blue:#60a5fa;
+    --card-ring: 1px solid rgba(255,255,255,.10);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   html,body{
     margin:0; padding:0; background:var(--bg-dark); color:var(--text);
-    font-family:"Comic Sans MS","Baloo 2","Fredoka",system-ui,sans-serif;
-    overflow-x:hidden;
+    font-family:"Comic Sans MS","Baloo 2","Fredoka",system-ui,sans-serif; overflow-x:hidden;
   }
 
-  /* ===== Single sticky hero (adds gradient overlay so it's never "empty") ===== */
+  /* Background motion (very light dots) */
+  canvas#fx{position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.45}
+  @media (prefers-reduced-motion:reduce){ canvas#fx{display:none} }
+
+  /* HERO — smaller to push content up */
   .hero{
-    position:sticky; top:0; height:85vh;
+    position:sticky; top:0; height:58vh;
     display:flex; align-items:center; justify-content:center; text-align:center;
     background:
-      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)),
+      linear-gradient(180deg, rgba(0,0,0,.40), rgba(0,0,0,.40)),
       url('your-photo-1.jpg') center/cover no-repeat;
-    padding:2rem;
+    padding:1.25rem; z-index:1;
   }
-  .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:1rem; align-items:center}
+  .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:.65rem; align-items:center}
   h1.title{
-    margin:0; font-size:clamp(2rem,6vw,3.5rem); color:var(--title-blue);
-    text-shadow:0 3px 18px rgba(0,0,0,.6);
+    margin:0; font-size:clamp(2.2rem,6vw,3.6rem); color:var(--title-blue);
+    text-shadow:0 6px 30px rgba(0,0,0,.6);
   }
 
-  /* ===== About card under title ===== */
+  /* About */
   .about-card{
-    width:100%;
-    background:rgba(26,26,26,.85); backdrop-filter:blur(2px);
-    border:2px solid transparent; border-radius:14px; border-image:var(--accent-gradient) 1;
-    padding:1rem clamp(1rem,3vw,1.5rem) 1.25rem; text-align:left;
-    box-shadow:0 8px 20px rgba(0,0,0,.35)
+    width:100%; background:rgba(20,20,24,.85); backdrop-filter:blur(2px);
+    border:2px solid transparent; border-radius:16px; border-image:var(--accent-gradient) 1;
+    padding:.8rem clamp(.9rem,3vw,1.25rem) 1rem; text-align:left; box-shadow:0 10px 26px rgba(0,0,0,.32);
   }
-  .about-header{
-    display:flex; align-items:center; justify-content:center;
-    gap:clamp(.5rem,2vw,1rem); margin-bottom:.5rem;
-  }
+  .about-header{display:flex; align-items:center; justify-content:center; gap:clamp(.5rem,2vw,1rem); margin-bottom:.4rem;}
   .about-header h2{
-    margin:0; font-size:clamp(1.15rem,3vw,1.6rem); line-height:1.1;
+    margin:0; font-size:clamp(1.05rem,3vw,1.5rem);
     background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
   }
   .about-header a{ display:inline-block; line-height:0; border-radius:12px }
   .about-icon{
-    width:clamp(34px,6vw,52px); height:clamp(34px,6vw,52px); object-fit:cover; border-radius:10px;
+    width:clamp(34px,6vw,50px); height:clamp(34px,6vw,50px); object-fit:cover; border-radius:12px;
     border:2px solid transparent; border-image:var(--accent-gradient) 1; background:#222;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
   }
-  .about-header a:hover .about-icon{
-    transform: translateY(-1px) scale(1.03);
-    filter: brightness(1.06);
-    box-shadow:0 6px 18px rgba(0,0,0,.35);
-  }
-  .about-content a{
-    color:#fff; text-decoration:none; font-weight:600;
-    transition:all .25s ease;
-  }
-  .about-content a:hover{
-    background:var(--accent-gradient);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    text-shadow:0 0 10px rgba(255,255,255,.6);
-  }
+  .about-header a:hover .about-icon{ transform: translateY(-1px) scale(1.03); filter: brightness(1.06); box-shadow:0 6px 18px rgba(0,0,0,.35) }
+  .about-content a{ color:#fff; text-decoration:none; font-weight:600; transition:all .25s ease; }
+  .about-content a:hover{ background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 10px rgba(255,255,255,.6) }
+  .about-content p{ margin:.35rem 0 .2rem; line-height:1.45 }
+
   @media (max-width:560px){
     .about-header{flex-wrap:wrap}
     .about-header a.about-left{order:2}
@@ -76,34 +66,69 @@
     .about-header h2{order:1; width:100%}
   }
 
-  /* ===== Buttons ===== */
-  .section{padding:1.5rem 0 2.5rem}
-  .section .container{width:min(1100px,92vw); margin:0 auto}
-  .grid-title{
-    font-size:clamp(1.2rem,3.2vw,1.6rem); margin:.75rem 0 0.75rem; color:#fbcfe8; text-align:center
+  /* Layout: content + right index */
+  .wrap{ display:grid; grid-template-columns: 1fr 240px; gap:16px; width:min(1200px,92vw); margin:0 auto }
+  @media (max-width:980px){ .wrap{ grid-template-columns: 1fr } }
+
+  /* Right sticky index */
+  .right-index{
+    position:sticky; top:10px; align-self:start; z-index:5;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:10px;
+    box-shadow:0 10px 24px rgba(0,0,0,.25);
+  }
+  .right-index h4{ margin:.1rem 0 .5rem; font-size:1rem; font-weight:900; color:#fff; }
+  .index-list{ display:flex; flex-direction:column; gap:8px }
+  .index-link{
+    display:flex; align-items:center; gap:.6rem; text-decoration:none; color:#fff; font-weight:800;
+    background:#111; border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:.5rem .7rem;
+    transition:transform .12s ease, filter .12s ease;
+  }
+  .index-link:hover{ transform:translateY(-1px); filter:brightness(1.05) }
+  .index-link .dot{ width:10px; height:10px; border-radius:50% }
+  .d-new{ background:#60a5fa } .d-old{ background:#f87171 } .d-rand{ background:#c084fc }
+
+  /* Sections (tight spacing) */
+  .section{padding:.6rem 0 1.8rem}
+  .section h3{
+    margin:.2rem 0 .6rem; font-size:clamp(1.1rem,3.2vw,1.6rem);
+    background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
   }
 
-  .button-grid{
-    display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:0 auto;
-  }
-  .btn{
-    height:84px; border:none; border-radius:12px; font-weight:700;
-    font-size:clamp(.9rem,1.7vw,1rem); color:#111;
-    box-shadow:0 6px 14px rgba(0,0,0,.32); cursor:pointer;
-    outline:1px solid rgba(255,255,255,.06);
-    transition:transform .14s ease, box-shadow .14s ease, filter .14s ease;
-    animation:pulse 4.5s ease-in-out infinite;
-  }
-  .btn:hover{transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,0,0,.4); filter:brightness(1.04)}
-  .btn:active{transform:translateY(0)}
-  @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.01)} }
-  @media (prefers-reduced-motion:reduce){ .btn{animation:none} }
-  @media (max-width:980px){.button-grid{grid-template-columns:repeat(4,1fr)}}
-  @media (max-width:760px){.button-grid{grid-template-columns:repeat(3,1fr)}}
-  @media (max-width:520px){.button-grid{grid-template-columns:repeat(2,1fr)}}
-  .hint{opacity:.75; font-size:.85rem; text-align:center; margin-top:.4rem}
+  /* Card Grid */
+  .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:10px; }
+  @media (max-width:980px){ .grid{ grid-template-columns: repeat(8, 1fr) } }
+  @media (max-width:720px){ .grid{ grid-template-columns: repeat(4, 1fr) } }
 
-  /* ===== Fixed "Top" button ===== */
+  /* Colorful, clean cards */
+  .card{
+    grid-column: span 4; /* 3 per row on desktop */
+    background:var(--panel);
+    border-radius:14px; border:var(--card-ring); overflow:hidden;
+    box-shadow: 0 10px 24px rgba(0,0,0,.35);
+    transform:translateZ(0);
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    position:relative;
+  }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 16px 34px rgba(0,0,0,.5) }
+
+  /* colorful banner */
+  .card .banner{
+    height:8px; background:linear-gradient(90deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
+    filter:saturate(1.2);
+  }
+
+  .card .body{ padding:12px; display:flex; align-items:center; gap:10px }
+  .chip{ font-size:.74rem; padding:.18rem .5rem; border-radius:999px; border:1px solid rgba(255,255,255,.12); opacity:.9 }
+  .label{ font-weight:800; letter-spacing:.2px; color:#fff; }
+  .not-added{ font-weight:900; color:#111; background:#fff; padding:.25rem .5rem; border-radius:8px; }
+  .go{
+    margin-left:auto; background:#fff; color:#111; font-weight:900; border:none; border-radius:10px; padding:.42rem .62rem; cursor:pointer;
+    box-shadow:0 10px 25px rgba(0,0,0,.35); transition:filter .15s ease, transform .15s ease;
+  }
+  .go:hover{ filter:brightness(.95); transform:translateY(-1px) }
+
+  /* Top button */
   #toTop{
     position:fixed; right:18px; bottom:18px; z-index:1000;
     display:flex; align-items:center; gap:.5rem;
@@ -114,47 +139,46 @@
   #toTop.show{opacity:1; pointer-events:auto; transform:translateY(0)}
   #toTop .emoji{font-size:1.1rem}
 
-  /* ===== Floating penguin (emoji only) ===== */
-  #chibi{
-    position:fixed; left:20vw; top:30vh; z-index:900;
-    font-size:44px; line-height:1; will-change:transform;
-    user-select:none; -webkit-user-drag:none;
-  }
+  /* Floating penguin */
+  #chibi{ position:fixed; left:20vw; top:30vh; z-index:900; font-size:44px; line-height:1; will-change:transform; user-select:none; -webkit-user-drag:none; }
+
+  /* small accent sweep */
+  .sweep{ position:fixed; left:-20%; right:-20%; height:3px; top:0; z-index:6;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+    mix-blend-mode:screen; animation: sweep 2.2s linear infinite; }
+  @keyframes sweep{ from{ transform:translateX(-40%) } to{ transform:translateX(40%) } }
+  @media (prefers-reduced-motion:reduce){ .sweep{ display:none } }
 </style>
 </head>
 <body>
-  <!-- Single sticky hero with title + about -->
+  <canvas id="fx"></canvas>
+  <div class="sweep" aria-hidden="true"></div>
+
+  <!-- HERO -->
   <section class="hero" id="top">
     <div class="stack">
       <h1 class="title">Penguin’s Coding Igloo</h1>
       <article class="about-card">
         <header class="about-header">
-          <!-- Left icon → HeistTeams (with robust fallback) -->
           <a class="about-left" href="https://discord.gg/heistteams" target="_blank" rel="noopener noreferrer" aria-label="HeistTeams Discord">
-            <img class="about-icon"
-                 src="images/heist-teams.jpg"
-                 alt="HeistTeams artwork"
+            <img class="about-icon" src="images/heist-teams.jpg" alt="HeistTeams artwork"
                  loading="lazy" decoding="async"
                  onerror="this.onerror=null; this.src='images/heist-teams.png';">
           </a>
-
           <h2>About Me</h2>
-
-          <!-- Right icon → Epsilon Flight Program (with robust fallback) -->
           <a class="about-right" href="https://discord.gg/bqJ6whRV" target="_blank" rel="noopener noreferrer" aria-label="Epsilon Flight Program Discord">
-            <img class="about-icon"
-                 src="images/epsilon-stitched.svg"
-                 alt="Epsilon Program stitched patch"
+            <img class="about-icon" src="images/epsilon-stitched.svg" alt="Epsilon Program stitched patch"
                  loading="lazy" decoding="async"
                  onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,&lt;svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27&gt;&lt;rect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23122c5a%27/&gt;&lt;text x=%2732%27 y=%2738%27 font-size=%2730%27 text-anchor=%27middle%27 fill=%27%23fff%27&gt;Ɛ&lt;/text&gt;&lt;/svg&gt;';">
           </a>
         </header>
-
         <div class="about-content">
           <p>
-            Late-night experiments and goofy builds. I own
-            <a href="https://discord.gg/heistteams" target="_blank" rel="noopener noreferrer">HeistTeams</a>
-            and co-own the
+            Hey! I’m Liam. This igloo is where I stash late-night builds, experiments, and goofy utilities.
+            If you see <span class="not-added">Not Added</span>, it’s just a work-in-progress label—links still open the page if it exists.
+          </p>
+          <p>
+            I run <a href="https://discord.gg/heistteams" target="_blank" rel="noopener noreferrer">HeistTeams</a> and co-own the
             <a href="https://discord.gg/bqJ6whRV" target="_blank" rel="noopener noreferrer">Epsilon Flight Program</a>.
           </p>
         </div>
@@ -162,107 +186,182 @@
     </div>
   </section>
 
-  <!-- Buttons moved up (directly under hero) -->
-  <section class="section">
-    <div class="container">
-      <h3 class="grid-title">Projects & Experiments</h3>
-      <div class="button-grid" id="buttonGrid"></div>
-      <p class="hint">Edit the <code>BUTTONS</code> array in the JS to set where each button goes.</p>
-    </div>
-  </section>
+  <div class="wrap">
+    <main>
+      <!-- NEW -->
+      <section class="section" id="new">
+        <h3>New Work</h3>
+        <div class="grid" id="grid-new"></div>
+      </section>
 
-  <!-- Fixed Top button -->
+      <!-- OLD (these display "Not Added") -->
+      <section class="section" id="old">
+        <h3>Old Work</h3>
+        <div class="grid" id="grid-old"></div>
+      </section>
+
+      <!-- RANDOM -->
+      <section class="section" id="rand">
+        <h3>Random Nonsense</h3>
+        <div class="grid" id="grid-rand"></div>
+      </section>
+    </main>
+
+    <!-- Right-side index (not a dropdown) -->
+    <aside class="right-index" aria-label="Section index">
+      <h4>Jump To</h4>
+      <nav class="index-list">
+        <a class="index-link" href="#new"><span class="dot d-new"></span> New Work</a>
+        <a class="index-link" href="#old"><span class="dot d-old"></span> Old Work</a>
+        <a class="index-link" href="#rand"><span class="dot d-rand"></span> Random Nonsense</a>
+        <a class="index-link" href="#top"><span class="dot" style="background:#fff"></span> Top</a>
+      </nav>
+    </aside>
+  </div>
+
+  <!-- Back to Top -->
   <button id="toTop" aria-label="Back to top"><span class="emoji">🐧</span> Top</button>
-
-  <!-- Floating penguin (emoji only) -->
+  <!-- Floating penguin -->
   <div id="chibi">🐧</div>
 
 <script>
-  /* ===== Pastel palette ===== */
-  const PASTELS = [
-    "#f9a8d4","#fcd34d","#a7f3d0","#bfdbfe","#fbcfe8",
-    "#fde68a","#bbf7d0","#c7d2fe","#fca5a5","#fdba74",
-    "#d9f99d","#93c5fd","#f5d0fe","#fecaca","#bef264",
-    "#7dd3fc","#fda4af","#c4b5fd","#fef3c7","#6ee7b7",
-    "#fef08a","#a5b4fc","#f472b6","#d8b4fe","#f87171"
-  ];
 
-  /* ===== PROJECT BUTTONS (exact names + links kept) ===== */
-  const BUTTONS = [
-    { label: "GTAV Modded Cars Showcase (pencars)", href: "pencars/index.html" },
-    { label: "Random GTA Website", href: "RaidShadowLegends.html" },
-    { label: "Discord Bot", href: "discord-bot.html" },
-    { label: "HTML Hackscreen", href: "hack.html" },
-    { label: "Marvel Rivals Stats", href: "marvel.html" },
-    { label: "Cookie Clicker Mod", href: "cookie.html" },
-    { label: "ASCII Toys", href: "ascii.html" },
-    { label: "Rainbow Fire GIF", href: "rainbow-fire.html" },
-    { label: "Penguin Banner", href: "gfx-penguin-banner.html" },
-    { label: "Pride Gradients", href: "gradients.html" },
-    { label: "Penguin Igloo UI", href: "ui-igloo.html" },
-    { label: "Robux Meme UI", href: "robux.html" },
-    { label: "Desktop Messenger", href: "messenger.html" },
-    { label: "Waitlist Mock", href: "waitlist.html" },
-    { label: "V/VI Logo Lab", href: "logo-lab.html" },
-    { label: "Tiny Utilities", href: "utils.html" },
-    { label: "Gradient Maker", href: "gradient-maker.html" },
-    { label: "LS Airport Sign", href: "lsia-sign.html" },
-    { label: "Waldo Horror", href: "waldo-horror.html" },
-    { label: "Penguin Emojis", href: "penguin-emojis.html" },
-    { label: "Pong Leaderboard", href: "pong.html" },
-    { label: "Heist Bible", href: "heist-bible.html" },
-    { label: "Tag Generator", href: "tag-generator.html" },
-    { label: "Penguin Stickers", href: "stickers.html" },
-    { label: "Random Toy", href: "toy.html" }
-  ];
 
-  /* ===== Build the grid (never rename labels; fall back to filename if missing) ===== */
-  const grid = document.getElementById("buttonGrid");
-  BUTTONS.forEach((b,i)=>{
-    const btn = document.createElement("button");
-    btn.className = "btn";
-    const label = (b.label && String(b.label).trim()) || (b.href ? b.href.split('/').pop() : "Link");
-    btn.textContent = label;
-    btn.style.backgroundColor = PASTELS[i % PASTELS.length];
-    btn.addEventListener("click", () => {
-      if (b.href && b.href !== "#") window.location.href = b.href;
-      else alert(label);
+const NEW_WORK_BUTTONS = [
+  { label: "Not added",               href: "RaidShadowLegends.html" },
+  { label: "Not added",              href: "marvel.html" },
+  { label: "Not added",                 href: "ui-igloo.html" },
+  { label: "Not added",                   href: "gradient-maker.html" },
+  { label: "Not added",                   href: "gfx-penguin-banner.html" }
+];
+
+const OLD_WORK_BUTTONS = [
+  { label: "GTAV Modded Cars Showcase (pencars)", href: "pencars/index.html" }, 
+  { label: "Not added",                          href: "discord-bot.html" },
+  { label: "Not added",                       href: "hack.html" },
+  { label: "Not added",                    href: "cookie.html" },
+  { label: "Not added",                     href: "messenger.html" },
+  { label: "Not added",                          href: "waitlist.html" },
+  { label: "Not added",                          href: "logo-lab.html" },
+  { label: "Not added",                         href: "utils.html" },
+  { label: "Not added",                        href: "lsia-sign.html" },
+  { label: "Not added",                       href: "pong.html" },
+  { label: "Not added",                             href: "heist-bible.html" },
+  { label: "Not added",                           href: "tag-generator.html" },
+  { label: "Not added",                        href: "stickers.html" }
+];
+
+const RANDOM_BUTTONS = [
+  { label: "Not added",            href: "ascii.html" },
+  { label: "Not added",      href: "rainbow-fire.html" },
+  { label: "Not added",       href: "gradients.html" },
+  { label: "Not added",         href: "robux.html" },
+  { label: "Not added",          href: "waldo-horror.html" },
+  { label: "Not added",        href: "penguin-emojis.html" },
+  { label: "Not added",            href: "toy.html" }
+];
+
+/* ==========================================================
+   Renderer
+   ========================================================== */
+function colorfulGrad(i){
+  const palettes = [
+    ["#f9a8d4","#c084fc"],["#60a5fa","#f87171"],["#bbf7d0","#fde68a"],
+    ["#93c5fd","#f5d0fe"],["#fecaca","#bef264"],["#7dd3fc","#fda4af"]
+  ];
+  const [a,b] = palettes[i % palettes.length];
+  return `linear-gradient(135deg, ${a}, ${b})`;
+}
+
+function card({label,href}, idx, opts={}){
+  const showNotAdded = !!opts.notAdded; // true for OLD only
+  const badge = href.startsWith('http') ? 'ext' : (href.split('/').pop().split('.').shift() || 'link');
+  const grad = colorfulGrad(idx);
+  return `
+  <article class="card" title="${label.replace(/"/g,'&quot;')}">
+    <div class="banner" style="background:${grad}"></div>
+    <div class="body">
+      <span class="chip" style="border-color:rgba(255,255,255,.18)">${badge}</span>
+      <div class="label">${showNotAdded ? 'Not Added' : label}</div>
+      <a class="go" href="${href}" ${href.startsWith('http')?'target="_blank" rel="noopener noreferrer"':''}>Open</a>
+    </div>
+  </article>`;
+}
+
+function mount(list, gridId, notAdded=false){
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = list.map((b,i)=>card(b,i,{notAdded})).join('');
+}
+
+mount(NEW_WORK_BUTTONS,  'grid-new',  false);
+mount(OLD_WORK_BUTTONS,  'grid-old',  true);   // Old Work shows "Not Added"
+mount(RANDOM_BUTTONS,    'grid-rand', false);
+
+/* ===== Top button ===== */
+const toTop = document.getElementById("toTop");
+window.addEventListener("scroll", () => {
+  toTop.classList.toggle("show", window.scrollY > 140);
+}, { passive:true });
+toTop.addEventListener("click", () => {
+  document.getElementById("top").scrollIntoView({ behavior:"smooth" });
+});
+
+/* ===== Floating penguin ===== */
+const chibi = document.getElementById("chibi");
+let x = window.innerWidth * 0.2, y = window.innerHeight * 0.3, size = 44;
+let vx = 0.85, vy = 0.65, rafId = null;
+function step(){
+  const w = window.innerWidth, h = window.innerHeight;
+  x += vx; y += vy;
+  if (x <= 0){ x = 0; vx = Math.abs(vx); }
+  if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
+  if (y <= 0){ y = 0; vy = Math.abs(vy); }
+  if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
+  chibi.style.transform = `translate(${x}px, ${y}px)`;
+  rafId = requestAnimationFrame(step);
+}
+function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
+function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+document.addEventListener("visibilitychange", () => document.hidden?stop():start());
+addEventListener("resize", () => {
+  x = Math.min(x, innerWidth - size);
+  y = Math.min(y, innerHeight - size);
+});
+chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.5; vy += (Math.random()-.5)*0.5; });
+start();
+
+/* ===== Soft particle bg ===== */
+(function(){
+  const c = document.getElementById('fx'); const ctx = c.getContext('2d');
+  let w=innerWidth, h=innerHeight, dpr= Math.max(1, Math.min(2, devicePixelRatio||1));
+  function resize(){ w=innerWidth; h=innerHeight; c.width=w*dpr; c.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+  resize(); addEventListener('resize', resize);
+
+  const N = 18;
+  const nodes = Array.from({length:N}, ()=>({
+    x: Math.random()*w,
+    y: Math.random()*h,
+    r: 14 + Math.random()*22,
+    vx: (Math.random()-.5)*0.25,
+    vy: (Math.random()-.5)*0.25,
+    hue: 280 + Math.random()*80
+  }));
+
+  function tick(){
+    ctx.clearRect(0,0,w,h);
+    nodes.forEach(n=>{
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<-40) n.x=w+40; if(n.x>w+40) n.x=-40;
+      if(n.y<-40) n.y=h+40; if(n.y>h+40) n.y=-40;
+      const g = ctx.createRadialGradient(n.x,n.y,0, n.x,n.y,n.r*2.2);
+      g.addColorStop(0, `hsla(${n.hue}, 80%, 70%, .22)`);
+      g.addColorStop(1, `hsla(${n.hue}, 80%, 70%, 0)`);
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*2.2,0,Math.PI*2); ctx.fill();
     });
-    grid.appendChild(btn);
-  });
-
-  /* ===== Show fixed Top button after scroll ===== */
-  const toTop = document.getElementById("toTop");
-  window.addEventListener("scroll", () => {
-    toTop.classList.toggle("show", window.scrollY > 140);
-  }, { passive:true });
-  toTop.addEventListener("click", () => {
-    document.getElementById("top").scrollIntoView({ behavior:"smooth" });
-  });
-
-  /* ===== Floating penguin bounce (emoji only) ===== */
-  const chibi = document.getElementById("chibi");
-  let x = window.innerWidth * 0.2, y = window.innerHeight * 0.3, size = 44;
-  let vx = 0.85, vy = 0.65, rafId = null;
-  function step(){
-    const w = window.innerWidth, h = window.innerHeight;
-    x += vx; y += vy;
-    if (x <= 0){ x = 0; vx = Math.abs(vx); }
-    if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
-    if (y <= 0){ y = 0; vy = Math.abs(vy); }
-    if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
-    chibi.style.transform = `translate(${x}px, ${y}px)`;
-    rafId = requestAnimationFrame(step);
+    requestAnimationFrame(tick);
   }
-  function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
-  function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
-  document.addEventListener("visibilitychange", () => document.hidden?stop():start());
-  addEventListener("resize", () => {
-    x = Math.min(x, innerWidth - size);
-    y = Math.min(y, innerHeight - size);
-  });
-  chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.5; vy += (Math.random()-.5)*0.5; });
-  start();
+  requestAnimationFrame(tick);
+})();
 </script>
 </body>
 </html>
