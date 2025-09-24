@@ -1,367 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Penguin’s Coding Igloo</title>
-<meta name="color-scheme" content="dark">
 <style>
   :root{
-    --accent-gradient: linear-gradient(135deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
-    --bg-dark:#0e0e10; --panel:#141418; --text:#fff; --title-blue:#60a5fa;
-    --card-ring: 1px solid rgba(255,255,255,.10);
+    --sky1:#e6f6ff; --sky2:#f7fbff;
+    --ink:#102a43;
+    --accent1:#60a5fa; --accent2:#f9a8d4; --accent3:#c084fc; --accent4:#bbf7d0; --accent5:#f87171;
+    --note:#fffdf6; --note-lines:#ececec;
+    --ring: 1px solid rgba(0,0,0,.08);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  html,body{
-    margin:0; padding:0; background:var(--bg-dark); color:var(--text);
-    font-family:"Comic Sans MS","Baloo 2","Fredoka",system-ui,sans-serif; overflow-x:hidden;
+  body{
+    margin:0; font-family:"Baloo 2","Comic Sans MS",system-ui,sans-serif; color:var(--ink);
+    background:linear-gradient(180deg,var(--sky1),var(--sky2));
+    overflow-x:hidden;
   }
 
-  /* Background motion (very light dots) */
-  canvas#fx{position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.45}
-  @media (prefers-reduced-motion:reduce){ canvas#fx{display:none} }
-
-  /* HERO — smaller to push content up */
-  .hero{
-    position:sticky; top:0; height:58vh;
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,.40), rgba(0,0,0,.40)),
-      url('your-photo-1.jpg') center/cover no-repeat;
-    padding:1.25rem; z-index:1;
+  /* ===== Header with flanking logos ===== */
+  header{
+    position:relative; padding:2.25rem 1rem 1.5rem; text-align:center;
   }
-  .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:.65rem; align-items:center}
   h1.title{
-    margin:0; font-size:clamp(2.2rem,6vw,3.6rem); color:var(--title-blue);
-    text-shadow:0 6px 30px rgba(0,0,0,.6);
+    margin:0;
+    font-size:clamp(2.4rem,7vw,4.2rem);
+    background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    text-shadow:0 6px 28px rgba(0,0,0,.12);
   }
+  .logo{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:clamp(110px,14vw,160px); height:clamp(110px,14vw,160px); object-fit:cover;
+    background:#fff; border-radius:20px; box-shadow:0 16px 34px rgba(0,0,0,.22);
+    border:6px solid #fff;
+  }
+  .logo.left{ left:clamp(12px,6vw,70px) }
+  .logo.right{ right:clamp(12px,6vw,70px) }
 
-  /* About */
-  .about-card{
-    width:100%; background:rgba(20,20,24,.85); backdrop-filter:blur(2px);
-    border:2px solid transparent; border-radius:16px; border-image:var(--accent-gradient) 1;
-    padding:.8rem clamp(.9rem,3vw,1.25rem) 1rem; text-align:left; box-shadow:0 10px 26px rgba(0,0,0,.32);
+  /* ===== About me pill ===== */
+  .about{
+    width:min(1100px,94vw); margin:0.8rem auto 1.6rem;
+    background:#ffffffd9; backdrop-filter:blur(3px);
+    border-radius:18px; border:2px solid transparent; border-image:linear-gradient(135deg,var(--accent2),var(--accent1),var(--accent3)) 1;
+    box-shadow:0 12px 28px rgba(0,0,0,.12);
+    padding:.85rem 1rem;
+    font-size:clamp(1rem,2.2vw,1.1rem); text-align:center;
   }
-  .about-header{display:flex; align-items:center; justify-content:center; gap:clamp(.5rem,2vw,1rem); margin-bottom:.4rem;}
-  .about-header h2{
-    margin:0; font-size:clamp(1.05rem,3vw,1.5rem);
-    background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  }
-  .about-header a{ display:inline-block; line-height:0; border-radius:12px }
-  .about-icon{
-    width:clamp(34px,6vw,50px); height:clamp(34px,6vw,50px); object-fit:cover; border-radius:12px;
-    border:2px solid transparent; border-image:var(--accent-gradient) 1; background:#222;
-    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-  }
-  .about-header a:hover .about-icon{ transform: translateY(-1px) scale(1.03); filter: brightness(1.06); box-shadow:0 6px 18px rgba(0,0,0,.35) }
-  .about-content a{ color:#fff; text-decoration:none; font-weight:600; transition:all .25s ease; }
-  .about-content a:hover{ background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 10px rgba(255,255,255,.6) }
-  .about-content p{ margin:.35rem 0 .2rem; line-height:1.45 }
+  .about a{ color:#0b3b64; font-weight:800; text-decoration:none; }
+  .about a:hover{ text-decoration:underline }
 
-  @media (max-width:560px){
-    .about-header{flex-wrap:wrap}
-    .about-header a.about-left{order:2}
-    .about-header a.about-right{order:3}
-    .about-header h2{order:1; width:100%}
+  /* ===== Section wrappers ===== */
+  .wrap{ width:min(1200px,94vw); margin:0 auto 4rem }
+  .row{ display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; align-items:start; margin:1.2rem 0 2.2rem }
+  .row.rev{ grid-template-columns: .9fr 1.1fr } /* flip */
+  @media (max-width:980px){ .row, .row.rev{ grid-template-columns: 1fr } }
+
+  /* ===== Slideshow frame ===== */
+  .frame{
+    height:280px; border-radius:18px; overflow:hidden; position:relative;
+    border:8px solid #fff; box-shadow:0 16px 34px rgba(0,0,0,.18);
+    background:#000;
   }
-
-  /* Layout: content + right index */
-  .wrap{ display:grid; grid-template-columns: 1fr 240px; gap:16px; width:min(1200px,92vw); margin:0 auto }
-  @media (max-width:980px){ .wrap{ grid-template-columns: 1fr } }
-
-  /* Right sticky index */
-  .right-index{
-    position:sticky; top:10px; align-self:start; z-index:5;
-    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:10px;
-    box-shadow:0 10px 24px rgba(0,0,0,.25);
+  .frame img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    opacity:0; animation:fade 12s infinite;
   }
-  .right-index h4{ margin:.1rem 0 .5rem; font-size:1rem; font-weight:900; color:#fff; }
-  .index-list{ display:flex; flex-direction:column; gap:8px }
-  .index-link{
-    display:flex; align-items:center; gap:.6rem; text-decoration:none; color:#fff; font-weight:800;
-    background:#111; border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:.5rem .7rem;
-    transition:transform .12s ease, filter .12s ease;
+  .frame img:nth-child(1){ animation-delay:0s }
+  .frame img:nth-child(2){ animation-delay:4s }
+  .frame img:nth-child(3){ animation-delay:8s }
+  @keyframes fade{ 0%,100%{opacity:0} 8%,32%{opacity:1} 35%,98%{opacity:0} }
+
+  /* ===== Note sections with link buttons ===== */
+  .note{
+    background:var(--note); border-radius:16px; border:var(--ring);
+    box-shadow:0 12px 26px rgba(0,0,0,.14); padding:1rem 1rem 1.1rem;
+    position:relative; overflow:hidden;
   }
-  .index-link:hover{ transform:translateY(-1px); filter:brightness(1.05) }
-  .index-link .dot{ width:10px; height:10px; border-radius:50% }
-  .d-new{ background:#60a5fa } .d-old{ background:#f87171 } .d-rand{ background:#c084fc }
-
-  /* Sections (tight spacing) */
-  .section{padding:.6rem 0 1.8rem}
-  .section h3{
-    margin:.2rem 0 .6rem; font-size:clamp(1.1rem,3.2vw,1.6rem);
-    background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  .note::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image: repeating-linear-gradient(var(--note-lines) 0 1px, transparent 1px 32px);
+    opacity:.45;
   }
-
-  /* Card Grid */
-  .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:10px; }
-  @media (max-width:980px){ .grid{ grid-template-columns: repeat(8, 1fr) } }
-  @media (max-width:720px){ .grid{ grid-template-columns: repeat(4, 1fr) } }
-
-  /* Colorful, clean cards */
-  .card{
-    grid-column: span 4; /* 3 per row on desktop */
-    background:var(--panel);
-    border-radius:14px; border:var(--card-ring); overflow:hidden;
-    box-shadow: 0 10px 24px rgba(0,0,0,.35);
-    transform:translateZ(0);
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-    position:relative;
+  .note h2{ margin:.1rem 0 .6rem; font-size:clamp(1.2rem,3vw,1.6rem) }
+  .buttons{ display:flex; flex-wrap:wrap; gap:.6rem }
+  .pill{
+    display:inline-block; text-decoration:none;
+    padding:.7rem 1rem; border-radius:999px; font-weight:900; letter-spacing:.2px;
+    color:#0b1320; background:linear-gradient(135deg,#7dd3fc,#a5b4fc);
+    box-shadow: 0 10px 22px rgba(0,0,0,.18), 0 0 0 2px #ffffff inset;
+    transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
   }
-  .card:hover{ transform:translateY(-2px); box-shadow:0 16px 34px rgba(0,0,0,.5) }
+  .pill:hover{ transform:translateY(-2px); filter:brightness(1.03); box-shadow:0 16px 30px rgba(0,0,0,.28), 0 0 0 2px #ffffff inset }
+  .pill:active{ transform:translateY(0) }
 
-  /* colorful banner */
-  .card .banner{
-    height:8px; background:linear-gradient(90deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
-    filter:saturate(1.2);
+  /* color cycle for pills */
+  .buttons .pill:nth-child(5n+1){ background:linear-gradient(135deg,#60a5fa,#c084fc) }
+  .buttons .pill:nth-child(5n+2){ background:linear-gradient(135deg,#f9a8d4,#c084fc) }
+  .buttons .pill:nth-child(5n+3){ background:linear-gradient(135deg,#bbf7d0,#7dd3fc) }
+  .buttons .pill:nth-child(5n+4){ background:linear-gradient(135deg,#fca5a5,#fde68a) }
+  .buttons .pill:nth-child(5n){   background:linear-gradient(135deg,#93c5fd,#f5d0fe) }
+
+  /* ===== Right-side menu (accordion) ===== */
+  .sidebar{
+    position:fixed; right:14px; top:50%; transform:translateY(-50%);
+    width:min(320px,72vw); z-index:50;
+    background:#ffffffee; backdrop-filter:blur(4px);
+    border-radius:16px; border:2px solid transparent; border-image:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3)) 1;
+    box-shadow:0 16px 36px rgba(0,0,0,.18);
+    overflow:hidden;
   }
-
-  .card .body{ padding:12px; display:flex; align-items:center; gap:10px }
-  .chip{ font-size:.74rem; padding:.18rem .5rem; border-radius:999px; border:1px solid rgba(255,255,255,.12); opacity:.9 }
-  .label{ font-weight:800; letter-spacing:.2px; color:#fff; }
-  .not-added{ font-weight:900; color:#111; background:#fff; padding:.25rem .5rem; border-radius:8px; }
-  .go{
-    margin-left:auto; background:#fff; color:#111; font-weight:900; border:none; border-radius:10px; padding:.42rem .62rem; cursor:pointer;
-    box-shadow:0 10px 25px rgba(0,0,0,.35); transition:filter .15s ease, transform .15s ease;
-  }
-  .go:hover{ filter:brightness(.95); transform:translateY(-1px) }
-
-  /* Top button */
-  #toTop{
-    position:fixed; right:18px; bottom:18px; z-index:1000;
+  .sb-header{ padding:.6rem .9rem; font-weight:900; font-size:1rem; background:#fff; border-bottom:var(--ring) }
+  details{ border-bottom:var(--ring) }
+  details:last-child{ border-bottom:none }
+  summary{
+    list-style:none; cursor:pointer; padding:.7rem .9rem; font-weight:800;
     display:flex; align-items:center; gap:.5rem;
-    background:#ffffff; color:#111; padding:.6rem .9rem; border-radius:999px; font-weight:800;
-    border:2px solid transparent; border-image:var(--accent-gradient) 1; box-shadow:0 10px 25px rgba(0,0,0,.35);
+  }
+  summary::-webkit-details-marker{ display:none }
+  .carat{ transition: transform .2s ease }
+  details[open] .carat{ transform: rotate(90deg) }
+  .sb-list{ padding:.4rem .9rem .9rem; display:flex; flex-wrap:wrap; gap:.5rem }
+  .sb-pill{
+    display:inline-block; text-decoration:none;
+    padding:.45rem .7rem; border-radius:999px; font-weight:800; font-size:.9rem;
+    color:#0b1020; background:linear-gradient(135deg,#bbf7d0,#7dd3fc);
+    border:1px solid #fff; box-shadow:0 6px 16px rgba(0,0,0,.12);
+  }
+
+  /* ===== Top button ===== */
+  #toTop{
+    position:fixed; right:18px; bottom:18px; z-index:60;
+    display:flex; align-items:center; gap:.5rem;
+    background:#ffffff; color:#0b1020; padding:.65rem 1rem; border-radius:999px; font-weight:900;
+    border:2px solid transparent; border-image:linear-gradient(135deg,var(--accent1),var(--accent3),var(--accent2)) 1;
+    box-shadow:0 12px 28px rgba(0,0,0,.24);
     opacity:0; pointer-events:none; transform:translateY(8px); transition:opacity .2s, transform .2s;
   }
-  #toTop.show{opacity:1; pointer-events:auto; transform:translateY(0)}
-  #toTop .emoji{font-size:1.1rem}
+  #toTop.show{ opacity:1; pointer-events:auto; transform:translateY(0) }
 
-  /* Floating penguin */
-  #chibi{ position:fixed; left:20vw; top:30vh; z-index:900; font-size:44px; line-height:1; will-change:transform; user-select:none; -webkit-user-drag:none; }
-
-  /* small accent sweep */
-  .sweep{ position:fixed; left:-20%; right:-20%; height:3px; top:0; z-index:6;
-    background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
-    mix-blend-mode:screen; animation: sweep 2.2s linear infinite; }
-  @keyframes sweep{ from{ transform:translateX(-40%) } to{ transform:translateX(40%) } }
-  @media (prefers-reduced-motion:reduce){ .sweep{ display:none } }
+  @media (max-width:1080px){
+    .sidebar{ position:static; transform:none; width:min(1100px,94vw); margin:0.5rem auto 1rem }
+  }
 </style>
 </head>
 <body>
-  <canvas id="fx"></canvas>
-  <div class="sweep" aria-hidden="true"></div>
 
-  <!-- HERO -->
-  <section class="hero" id="top">
-    <div class="stack">
-      <h1 class="title">Penguin’s Coding Igloo</h1>
-      <article class="about-card">
-        <header class="about-header">
-          <a class="about-left" href="https://discord.gg/heistteams" target="_blank" rel="noopener noreferrer" aria-label="HeistTeams Discord">
-            <img class="about-icon" src="images/heist-teams.jpg" alt="HeistTeams artwork"
-                 loading="lazy" decoding="async"
-                 onerror="this.onerror=null; this.src='images/heist-teams.png';">
-          </a>
-          <h2>About Me</h2>
-          <a class="about-right" href="https://discord.gg/bqJ6whRV" target="_blank" rel="noopener noreferrer" aria-label="Epsilon Flight Program Discord">
-            <img class="about-icon" src="images/epsilon-stitched.svg" alt="Epsilon Program stitched patch"
-                 loading="lazy" decoding="async"
-                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,&lt;svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27&gt;&lt;rect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23122c5a%27/&gt;&lt;text x=%2732%27 y=%2738%27 font-size=%2730%27 text-anchor=%27middle%27 fill=%27%23fff%27&gt;Ɛ&lt;/text&gt;&lt;/svg&gt;';">
-          </a>
-        </header>
-        <div class="about-content">
-          <p>
-            Hey! I’m Liam. This igloo is where I stash late-night builds, experiments, and goofy utilities.
-            If you see <span class="not-added">Not Added</span>, it’s just a work-in-progress label—links still open the page if it exists.
-          </p>
-          <p>
-            I run <a href="https://discord.gg/heistteams" target="_blank" rel="noopener noreferrer">HeistTeams</a> and co-own the
-            <a href="https://discord.gg/bqJ6whRV" target="_blank" rel="noopener noreferrer">Epsilon Flight Program</a>.
-          </p>
-        </div>
-      </article>
-    </div>
-  </section>
+  <!-- Header -->
+  <header id="top">
+    <img class="logo left"  src="images/heist-teams.jpg"       alt="HeistTeams">
+    <h1 class="title">Penguin’s Coding Igloo</h1>
+    <img class="logo right" src="images/epsilon-stitched.svg"  alt="Epsilon Flight Program">
+  </header>
 
+  <!-- About -->
+<div class="about">
+  Hey there, welcome to my igloo! I’m Liam, most of this is just late-night coding experiments, goofy projects, and things I thought would be fun to share.  
+  <br><br>
+  Around here I run <a href="images/heist-teams.png" target="_blank" rel="noopener">HeistTeams</a> with friends, and I also help fly the 
+  <a href="images/epsilon-program.png" target="_blank" rel="noopener">Epsilon Flight Program</a>.  
+  <br><br>
+  Thanks for stopping by, feel free to poke around and enjoy the penguin chaos!
+</div>
+
+
+  <!-- Right-side menu (accordion) -->
+  <aside class="sidebar" aria-label="Quick menu">
+    <div class="sb-header">Browse Areas</div>
+    <details open><summary><span class="carat">▶</span> New Ideas</summary><div class="sb-list" id="sb-new"></div></details>
+    <details><summary><span class="carat">▶</span> Old Work</summary><div class="sb-list" id="sb-old"></div></details>
+    <details><summary><span class="carat">▶</span> Game Attempts</summary><div class="sb-list" id="sb-game"></div></details>
+    <details><summary><span class="carat">▶</span> Random Stuff</summary><div class="sb-list" id="sb-rand"></div></details>
+  </aside>
+
+  <!-- Content rows -->
   <div class="wrap">
-    <main>
-      <!-- NEW -->
-      <section class="section" id="new">
-        <h3>New Work</h3>
-        <div class="grid" id="grid-new"></div>
-      </section>
+    <div class="row">
+      <section class="note"><h2>New Ideas</h2><div class="buttons" id="btns-new"></div></section>
+      <div class="frame"><img src="images/new-a.jpg"><img src="images/new-b.jpg"><img src="images/new-c.jpg"></div>
+    </div>
 
-      <!-- OLD (these display "Not Added") -->
-      <section class="section" id="old">
-        <h3>Old Work</h3>
-        <div class="grid" id="grid-old"></div>
-      </section>
+    <div class="row rev">
+      <div class="frame"><img src="images/old-a.jpg"><img src="images/old-b.jpg"><img src="images/old-c.jpg"></div>
+      <section class="note"><h2>Old Work</h2><div class="buttons" id="btns-old"></div></section>
+    </div>
 
-      <!-- RANDOM -->
-      <section class="section" id="rand">
-        <h3>Random Nonsense</h3>
-        <div class="grid" id="grid-rand"></div>
-      </section>
-    </main>
+    <div class="row">
+      <section class="note"><h2>Game Attempts</h2><div class="buttons" id="btns-game"></div></section>
+      <div class="frame"><img src="images/game-a.jpg"><img src="images/game-b.jpg"><img src="images/game-c.jpg"></div>
+    </div>
 
-    <!-- Right-side index (not a dropdown) -->
-    <aside class="right-index" aria-label="Section index">
-      <h4>Jump To</h4>
-      <nav class="index-list">
-        <a class="index-link" href="#new"><span class="dot d-new"></span> New Work</a>
-        <a class="index-link" href="#old"><span class="dot d-old"></span> Old Work</a>
-        <a class="index-link" href="#rand"><span class="dot d-rand"></span> Random Nonsense</a>
-        <a class="index-link" href="#top"><span class="dot" style="background:#fff"></span> Top</a>
-      </nav>
-    </aside>
+    <div class="row">
+      <section class="note" style="grid-column:1 / -1"><h2>Random Stuff</h2><div class="buttons" id="btns-rand"></div></section>
+    </div>
   </div>
 
   <!-- Back to Top -->
-  <button id="toTop" aria-label="Back to top"><span class="emoji">🐧</span> Top</button>
-  <!-- Floating penguin -->
-  <div id="chibi">🐧</div>
+  <button id="toTop" aria-label="Back to top">🐧 Top</button>
 
 <script>
-
-
-const NEW_WORK_BUTTONS = [
-  { label: "Not added",               href: "RaidShadowLegends.html" },
-  { label: "Not added",              href: "marvel.html" },
-  { label: "Not added",                 href: "ui-igloo.html" },
-  { label: "Not added",                   href: "gradient-maker.html" },
-  { label: "Not added",                   href: "gfx-penguin-banner.html" }
+/* ===== Arrays of label + href ===== */
+const NEW_IDEAS = [
+  {label:"Shader Toy Doodles", href:"shader-toys.html"},
+  {label:"Color Ramp Generator", href:"color-ramps.html"},
+  {label:"Penguin Sticker Maker", href:"stickers.html"},
 ];
 
-const OLD_WORK_BUTTONS = [
-  { label: "GTAV Modded Cars Showcase (pencars)", href: "pencars/index.html" }, 
-  { label: "Not added",                          href: "discord-bot.html" },
-  { label: "Not added",                       href: "hack.html" },
-  { label: "Not added",                    href: "cookie.html" },
-  { label: "Not added",                     href: "messenger.html" },
-  { label: "Not added",                          href: "waitlist.html" },
-  { label: "Not added",                          href: "logo-lab.html" },
-  { label: "Not added",                         href: "utils.html" },
-  { label: "Not added",                        href: "lsia-sign.html" },
-  { label: "Not added",                       href: "pong.html" },
-  { label: "Not added",                             href: "heist-bible.html" },
-  { label: "Not added",                           href: "tag-generator.html" },
-  { label: "Not added",                        href: "stickers.html" }
+const OLD_WORK = [
+  {label:"GTAV Modded Cars Showcase (pencars)", href:"pencars/index.html"},
+  {label:"Discord Bot", href:"discord-bot.html"},
+  {label:"HTML Hackscreen", href:"hack.html"},
 ];
 
-const RANDOM_BUTTONS = [
-  { label: "Not added",            href: "ascii.html" },
-  { label: "Not added",      href: "rainbow-fire.html" },
-  { label: "Not added",       href: "gradients.html" },
-  { label: "Not added",         href: "robux.html" },
-  { label: "Not added",          href: "waldo-horror.html" },
-  { label: "Not added",        href: "penguin-emojis.html" },
-  { label: "Not added",            href: "toy.html" }
+const GAME_ATTEMPTS = [
+  {label:"Snowball Toss Prototype", href:"snowball.html"},
+  {label:"Igloo Defender", href:"igloo-defender.html"},
+  {label:"Fish Catcher", href:"fish-catcher.html"},
 ];
 
-/* ==========================================================
-   Renderer
-   ========================================================== */
-function colorfulGrad(i){
-  const palettes = [
-    ["#f9a8d4","#c084fc"],["#60a5fa","#f87171"],["#bbf7d0","#fde68a"],
-    ["#93c5fd","#f5d0fe"],["#fecaca","#bef264"],["#7dd3fc","#fda4af"]
-  ];
-  const [a,b] = palettes[i % palettes.length];
-  return `linear-gradient(135deg, ${a}, ${b})`;
+const RANDOM_STUFF = [
+  {label:"ASCII Toys", href:"ascii.html"},
+  {label:"Rainbow Fire GIF", href:"rainbow-fire.html"},
+  {label:"Pride Gradients", href:"gradients.html"},
+];
+
+/* ===== Render link pills ===== */
+function mount(list, mountId, asLinks=true){
+  const box = document.getElementById(mountId);
+  box.innerHTML = list.map(item =>
+    `<a class="${asLinks?'pill':'sb-pill'}" href="${item.href}" ${item.href.startsWith('http')?'target="_blank" rel="noopener"':''}>${item.label}</a>`
+  ).join('');
 }
+mount(NEW_IDEAS,'btns-new'); mount(OLD_WORK,'btns-old'); mount(GAME_ATTEMPTS,'btns-game'); mount(RANDOM_STUFF,'btns-rand');
+mount(NEW_IDEAS,'sb-new',false); mount(OLD_WORK,'sb-old',false); mount(GAME_ATTEMPTS,'sb-game',false); mount(RANDOM_STUFF,'sb-rand',false);
 
-function card({label,href}, idx, opts={}){
-  const showNotAdded = !!opts.notAdded; // true for OLD only
-  const badge = href.startsWith('http') ? 'ext' : (href.split('/').pop().split('.').shift() || 'link');
-  const grad = colorfulGrad(idx);
-  return `
-  <article class="card" title="${label.replace(/"/g,'&quot;')}">
-    <div class="banner" style="background:${grad}"></div>
-    <div class="body">
-      <span class="chip" style="border-color:rgba(255,255,255,.18)">${badge}</span>
-      <div class="label">${showNotAdded ? 'Not Added' : label}</div>
-      <a class="go" href="${href}" ${href.startsWith('http')?'target="_blank" rel="noopener noreferrer"':''}>Open</a>
-    </div>
-  </article>`;
-}
-
-function mount(list, gridId, notAdded=false){
-  const grid = document.getElementById(gridId);
-  grid.innerHTML = list.map((b,i)=>card(b,i,{notAdded})).join('');
-}
-
-mount(NEW_WORK_BUTTONS,  'grid-new',  false);
-mount(OLD_WORK_BUTTONS,  'grid-old',  true);   // Old Work shows "Not Added"
-mount(RANDOM_BUTTONS,    'grid-rand', false);
-
-/* ===== Top button ===== */
-const toTop = document.getElementById("toTop");
-window.addEventListener("scroll", () => {
-  toTop.classList.toggle("show", window.scrollY > 140);
-}, { passive:true });
-toTop.addEventListener("click", () => {
-  document.getElementById("top").scrollIntoView({ behavior:"smooth" });
-});
-
-/* ===== Floating penguin ===== */
-const chibi = document.getElementById("chibi");
-let x = window.innerWidth * 0.2, y = window.innerHeight * 0.3, size = 44;
-let vx = 0.85, vy = 0.65, rafId = null;
-function step(){
-  const w = window.innerWidth, h = window.innerHeight;
-  x += vx; y += vy;
-  if (x <= 0){ x = 0; vx = Math.abs(vx); }
-  if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
-  if (y <= 0){ y = 0; vy = Math.abs(vy); }
-  if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
-  chibi.style.transform = `translate(${x}px, ${y}px)`;
-  rafId = requestAnimationFrame(step);
-}
-function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
-function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
-document.addEventListener("visibilitychange", () => document.hidden?stop():start());
-addEventListener("resize", () => {
-  x = Math.min(x, innerWidth - size);
-  y = Math.min(y, innerHeight - size);
-});
-chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.5; vy += (Math.random()-.5)*0.5; });
-start();
-
-/* ===== Soft particle bg ===== */
-(function(){
-  const c = document.getElementById('fx'); const ctx = c.getContext('2d');
-  let w=innerWidth, h=innerHeight, dpr= Math.max(1, Math.min(2, devicePixelRatio||1));
-  function resize(){ w=innerWidth; h=innerHeight; c.width=w*dpr; c.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
-  resize(); addEventListener('resize', resize);
-
-  const N = 18;
-  const nodes = Array.from({length:N}, ()=>({
-    x: Math.random()*w,
-    y: Math.random()*h,
-    r: 14 + Math.random()*22,
-    vx: (Math.random()-.5)*0.25,
-    vy: (Math.random()-.5)*0.25,
-    hue: 280 + Math.random()*80
-  }));
-
-  function tick(){
-    ctx.clearRect(0,0,w,h);
-    nodes.forEach(n=>{
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<-40) n.x=w+40; if(n.x>w+40) n.x=-40;
-      if(n.y<-40) n.y=h+40; if(n.y>h+40) n.y=-40;
-      const g = ctx.createRadialGradient(n.x,n.y,0, n.x,n.y,n.r*2.2);
-      g.addColorStop(0, `hsla(${n.hue}, 80%, 70%, .22)`);
-      g.addColorStop(1, `hsla(${n.hue}, 80%, 70%, 0)`);
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*2.2,0,Math.PI*2); ctx.fill();
-    });
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-})();
+/* ===== Top button behavior ===== */
+const toTop=document.getElementById('toTop');
+addEventListener('scroll',()=>{ toTop.classList.toggle('show',window.scrollY>180) },{passive:true});
+toTop.addEventListener('click',()=>{ document.getElementById('top').scrollIntoView({behavior:'smooth'}) });
 </script>
 </body>
 </html>
