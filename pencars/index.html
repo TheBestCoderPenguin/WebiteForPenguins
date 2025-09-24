@@ -1,156 +1,454 @@
 <!DOCTYPE html>
-<html lang="en">
+<html id="top" lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Penguin’s Coding Igloo — Gallery</title>
-<style>
-  :root{
-    --accent-gradient: linear-gradient(135deg,#f9a8d4,#c084fc,#60a5fa,#f87171);
-    --bg-dark:#111; --text:#fff; --title-blue:#60a5fa;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  html,body{
-    margin:0; padding:0; background:var(--bg-dark); color:var(--text);
-    font-family:"Comic Sans MS","Baloo 2","Fredoka",system-ui,sans-serif;
-    overflow-x:hidden;
-  }
+  <meta charset="utf-8" />
+  <title>Modded Cars • Showcase</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  /* Hero header */
-  .hero{
-    position:sticky; top:0; height:40vh;
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    background:url('your-photo-1.jpg') center/cover no-repeat;
-    padding:2rem;
-  }
-  .stack{width:min(1100px,92vw); display:flex; flex-direction:column; gap:1rem; align-items:center}
-  h1.title{
-    margin:0; font-size:clamp(2rem,6vw,3.2rem); color:var(--title-blue);
-    text-shadow:0 3px 18px rgba(0,0,0,.6);
-  }
-  .sub{margin:0; opacity:.85; font-size:clamp(.95rem,2.2vw,1.05rem)}
+  <!-- Your existing site styles -->
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/index.css" />
+  <!-- Your existing site script (if any) -->
+  <script src="/script.js" defer></script>
 
-  /* Gallery grid */
-  .section{padding:1.5rem 0 2.5rem}
-  .container{width:min(1200px,92vw); margin:0 auto}
-  .grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-    gap:14px;
-  }
-  .card{
-    background:rgba(26,26,26,.85);
-    border:2px solid transparent; border-radius:14px; border-image:var(--accent-gradient) 1;
-    overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,.35);
-    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-  }
-  .card:hover{ transform:translateY(-2px); filter:brightness(1.04); box-shadow:0 16px 34px rgba(0,0,0,.5) }
-  .caption{ padding:.8rem 1rem }
-  .caption a{
-    font-weight:700; color:#fff; text-decoration:none;
-    transition:all .25s ease;
-  }
-  .caption a:hover{
-    background:var(--accent-gradient);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    text-shadow:0 0 10px rgba(255,255,255,.6);
-  }
+  <style>
+    :root{
+      --bg:#0e1525;
+      --card:#141b2d;
+      --muted:#9fb0d4;
+      --accent:#9bd1ff;
+      --accent-2:#d6a8ff;
+      --surface:#0b0f1c;
+      --ring: rgba(155, 209, 255, 0.55);
+    }
+    html, body { background: var(--bg); color: #e8f0ff; margin:0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-shadow: 0 0 6px var(--accent), 0 0 18px var(--accent-2); }
 
-  /* Back to home + penguin */
-  #toTop{
-    position:fixed; right:18px; bottom:18px; z-index:1100;
-    display:flex; align-items:center; gap:.5rem;
-    background:#ffffff; color:#111; padding:.6rem .9rem; border-radius:999px; font-weight:800;
-    border:2px solid transparent; border-image:var(--accent-gradient) 1; box-shadow:0 10px 25px rgba(0,0,0,.35);
-  }
-  #chibi{
-    position:fixed; left:20vw; top:30vh; z-index:900;
-    font-size:44px; line-height:1; will-change:transform; user-select:none; -webkit-user-drag:none;
-  }
-</style>
+    /* Sticky hero */
+    .hero {
+      position: relative;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      min-height: 52vh;
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(155,209,255,.15), transparent 60%),
+        radial-gradient(1200px 500px at 80% -10%, rgba(214,168,255,.14), transparent 60%),
+        linear-gradient(180deg, #0f1930 0%, var(--bg) 60%);
+      overflow: hidden;
+    }
+    .hero h1{
+      font-size: clamp(28px, 4vw, 52px);
+      margin: 0 12px;
+      letter-spacing: .5px;
+    }
+    .hero p{
+      color: var(--muted);
+      max-width: 820px; margin: 16px auto 0; padding: 0 16px;
+    }
+    .cta-row{
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 22px;
+    }
+    .pill{
+      background: linear-gradient(90deg, rgba(155,209,255,.12), rgba(214,168,255,.12));
+      border: 1px solid rgba(155,209,255,.25);
+      padding: 10px 16px; border-radius: 999px; font-weight: 600;
+      transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 0 0 0 rgba(155,209,255,0);
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      border-color: var(--ring);
+      box-shadow: 0 0 0 6px rgba(155,209,255,0.08);
+    }
+
+    /* Notice bar */
+    .notice{
+      max-width: 1100px; margin: -28px auto 24px; padding: 14px 16px;
+      background: linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(155,209,255,.22); border-radius: 14px;
+      color: #eaf3ff;
+    }
+    .notice b{ color:#fff; }
+
+    /* Section shell */
+    .section{
+      max-width: 1200px; margin: 32px auto; padding: 0 16px;
+    }
+    .section h2{
+      font-size: clamp(20px, 2.4vw, 30px);
+      margin: 26px 0 12px;
+      letter-spacing: .4px;
+    }
+    .hint{ color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+
+    /* Card grid */
+    .grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(155,209,255,.18);
+      border-radius: 16px; overflow: hidden;
+      transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: var(--ring);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 0 6px rgba(155,209,255,.08);
+    }
+    .card a{ display: block; color: inherit; }
+    .thumb{
+      display:block; width:100%; height:180px; object-fit:cover; background:#0a0f1c;
+    }
+    .card-body{ padding: 10px 12px 14px; }
+    .card-title{ font-weight: 700; margin: 2px 0 6px; }
+    .card-sub{ color: var(--muted); font-size: 13px; }
+
+    /* Full-width media */
+    .media{
+      width: 100%; height: auto; border: 1px solid rgba(155,209,255,.18);
+      border-radius: 12px; display:block;
+    }
+    .stack{ display: grid; gap: 12px; }
+
+    /* Video embeds */
+    .video{
+      width: 100%;
+      aspect-ratio: 13 / 8;
+      border: 1px solid rgba(155,209,255,.18);
+      border-radius: 12px;
+    }
+
+    /* Back to top */
+    .to-top{
+      position: fixed; right: 16px; bottom: 16px; z-index: 50;
+      padding: 10px 14px; border-radius: 999px; font-weight:700;
+      background: linear-gradient(90deg, rgba(155,209,255,.18), rgba(214,168,255,.18));
+      border: 1px solid rgba(155,209,255,.35);
+      backdrop-filter: blur(6px);
+    }
+
+    /* Floating penguin */
+    .floaty {
+      position: fixed; left: 8%; bottom: 10%;
+      font-size: 34px; user-select: none; filter: drop-shadow(0 6px 24px rgba(0,0,0,.45));
+      animation: bob 4s ease-in-out infinite, drift 22s linear infinite alternate;
+      z-index: 10;
+    }
+    @keyframes bob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } }
+    @keyframes drift { 0%{ transform: translateX(0) } 100%{ transform: translateX(40vw) } }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+    .spacer{ height: 8px; }
+  </style>
 </head>
 <body>
-  <section class="hero" id="top">
+
+  <!-- Floating penguin friend -->
+  <div class="floaty" aria-hidden="true">🐧</div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <h1>CausticPenguino’s Modded Vehicles — Showcase</h1>
+      <p>
+        A clean, visual index of garages, special rides, and hangar queens.
+        Browse the galleries below or jump to a section. All original links and images are preserved.
+      </p>
+      <div class="cta-row">
+        <a class="pill" href="#directories">Directories</a>
+        <a class="pill" href="#office">Office Garages</a>
+        <a class="pill" href="#generic">Generic Garages</a>
+        <a class="pill" href="#venues">Nightclub • Facility • Penthouse</a>
+        <a class="pill" href="#arena">Arena Workshop</a>
+        <a class="pill" href="#top">Top</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notice -->
+  <div class="notice section">
+    <b>Heads up:</b> I’m no longer trading or selling. This site is just a showcase and won’t be updated further. Enjoy browsing!
+  </div>
+
+  <!-- Quick directories -->
+  <section id="directories" class="section">
+    <h2>Directories</h2>
+    <p class="hint">Fast links styled like the main index. These point to your original pages.</p>
+    <div class="grid">
+      <div class="card">
+        <a href="contents.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1A.JPG?v=1588172282741" alt="Contents teaser">
+          <div class="card-body">
+            <div class="card-title">List of Cars</div>
+            <div class="card-sub">Browse all entries (contents.html)</div>
+          </div>
+        </a>
+      </div>
+      <div class="card">
+        <a href="special.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1544.JPG?v=1588190577038" alt="Special vehicles teaser">
+          <div class="card-body">
+            <div class="card-title">Special Vehicles</div>
+            <div class="card-sub">Unique builds & oddities</div>
+          </div>
+        </a>
+      </div>
+      <div class="card">
+        <a href="planes.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3A.JPG?v=1588172835522" alt="Aircraft teaser">
+          <div class="card-body">
+            <div class="card-title">Modded Aircraft</div>
+            <div class="card-sub">Hangar gallery & planes.html</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Office Garages -->
+  <section id="office" class="section">
+    <h2>Office Garages</h2>
+    <p class="hint">Tap the garage title to open its dedicated page. Images below are the originals, kept in order.</p>
+
+    <div class="grid">
+      <div class="card">
+        <a href="office1.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1A.JPG?v=1588172282741" alt="Office Garage 1 preview">
+          <div class="card-body">
+            <div class="card-title">Office Garage 1</div>
+            <div class="card-sub">Open the detailed page</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="office2.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2A.JPG?v=1588172569058" alt="Office Garage 2 preview">
+          <div class="card-body">
+            <div class="card-title">Office Garage 2</div>
+            <div class="card-sub">Open the detailed page</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="office3.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3A.JPG?v=1588172835522" alt="Office Garage 3 preview">
+          <div class="card-body">
+            <div class="card-title">Office Garage 3</div>
+            <div class="card-sub">Open the detailed page</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Keep the original image groups in order, styled -->
     <div class="stack">
-      <h1 class="title">Penguin’s Coding Igloo</h1>
-      <p class="sub">Gallery of goofy projects & experiments</p>
+      <!-- Office 1 images -->
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1A.JPG?v=1588172282741" alt="Office 1 image A" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1B.JPG?v=1588172283508" alt="Office 1 image B" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F1C.JPG?v=1588172290293" alt="Office 1 image C" />
+
+      <!-- Office 2 images -->
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2A.JPG?v=1588172569058" alt="Office 2 image A" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2B.JPG?v=1588172571406" alt="Office 2 image B" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F2c.PNG?v=1588172573918" alt="Office 2 image C" />
+
+      <!-- Office 3 images -->
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3A.JPG?v=1588172835522" alt="Office 3 image A" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3B.JPG?v=1588172832332" alt="Office 3 image B" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2F3C.JPG?v=1588172833700" alt="Office 3 image C" />
     </div>
   </section>
 
+  <!-- Generic Garages -->
+  <section id="generic" class="section">
+    <h2>Generic Garages</h2>
+    <p class="hint">Click a title to jump into that garage’s page.</p>
+
+    <div class="grid">
+      <div class="card">
+        <a href="NorthConker.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1515.JPG?v=1588173511222" alt="2044 North Conker Ave">
+          <div class="card-body">
+            <div class="card-title">2044 North Conker Ave</div>
+            <div class="card-sub">North Conker</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="SupplyStreet.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1573.JPG?v=1588294802680" alt="331 Supply St">
+          <div class="card-body">
+            <div class="card-title">331 Supply St</div>
+            <div class="card-sub">Supply Street</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="/MurrietaHeights.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1536.JPG?v=1588173514300" alt="Murrieta Heights">
+          <div class="card-body">
+            <div class="card-title">Murrieta Heights</div>
+            <div class="card-sub">East LS</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="/EclipseP.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1546.JPG?v=1588190588457" alt="Eclipse, Penthouse Suite 3">
+          <div class="card-body">
+            <div class="card-title">Eclipse — Penthouse Suite 3</div>
+            <div class="card-sub">Vinewood</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="Exceptionalists.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1544.JPG?v=1588190577038" alt="Exceptionalists Way">
+          <div class="card-body">
+            <div class="card-title">Exceptionalists Way</div>
+            <div class="card-sub">LSIA Area</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <a href="GreenParkWay.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1545.JPG?v=1588190578258" alt="Greenwhich Parkway">
+          <div class="card-body">
+            <div class="card-title">Greenwhich Parkway</div>
+            <div class="card-sub">LSIA Loop</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Preserve original single images in order -->
+    <div class="stack">
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1515.JPG?v=1588173511222" alt="North Conker image" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1573.JPG?v=1588294802680" alt="Supply Street image" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1536.JPG?v=1588173514300" alt="Murrieta Heights image" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1546.JPG?v=1588190588457" alt="Eclipse Penthouse Suite 3 image" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1544.JPG?v=1588190577038" alt="Exceptionalists Way image" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1545.JPG?v=1588190578258" alt="Greenwhich Parkway image" />
+    </div>
+  </section>
+
+  <!-- Venues -->
+  <section id="venues" class="section">
+    <h2>Nightclub • Facility • Penthouse</h2>
+
+    <div class="grid">
+      <div class="card">
+        <a href="Nightclub.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FNightclub1.JPG?v=1588173150987" alt="Nightclub">
+          <div class="card-body">
+            <div class="card-title">Nightclub</div>
+            <div class="card-sub">Basement & storage</div>
+          </div>
+        </a>
+      </div>
+      <div class="card">
+        <a href="Facility.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Ffacility1.JPG?v=1588173263077" alt="Facility">
+          <div class="card-body">
+            <div class="card-title">Facility</div>
+            <div class="card-sub">Doomsday bunker</div>
+          </div>
+        </a>
+      </div>
+      <div class="card">
+        <a href="Penthouse.html">
+          <img class="thumb" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Fpenthouse%201.JPG?v=1588173250228" alt="Penthouse">
+          <div class="card-body">
+            <div class="card-title">Penthouse</div>
+            <div class="card-sub">Diamond vibes</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Keep original image sets -->
+    <div class="stack">
+      <!-- Nightclub -->
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FNightclub1.JPG?v=1588173150987" alt="Nightclub 1" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Fnightclub2.JPG?v=1588173151067" alt="Nightclub 2" />
+
+      <!-- Facility -->
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Ffacility1.JPG?v=1588173263077" alt="Facility 1" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Ffacility%202.JPG?v=1588173263750" alt="Facility 2" />
+
+      <!-- Penthouse -->
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2Fpenthouse%201.JPG?v=1588173250228" alt="Penthouse 1" />
+      <img class="media" src="https://cdn.glitch.com/38f89e25-04fd-4d78-906b-2f30e3a986bf%2FIMG_1574.JPG?v=1588294799618" alt="Penthouse 2" />
+    </div>
+  </section>
+
+  <!-- Arena Workshop -->
+  <section id="arena" class="section">
+    <h2>Arena Workshop</h2>
+    <p class="hint">Original YouTube embeds retained, restyled.</p>
+
+    <div class="stack">
+      <h3><a href="arena1.html">Arena Workshop</a></h3>
+      <iframe
+        class="video"
+        src="https://www.youtube.com/embed/KoThppdx5AI"
+        title="Arena Workshop"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+
+      <h3><a href="arena2.html">Arena Basement 2</a></h3>
+      <iframe
+        class="video"
+        src="https://www.youtube.com/embed/5G0ww_5iobM"
+        title="Arena Basement 2"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+
+      <h3><a href="arena3.html">Arena Basement 3</a></h3>
+      <iframe
+        class="video"
+        src="https://www.youtube.com/embed/ehvYRgwfVn4"
+        title="Arena Basement 3"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <!-- Footer copy from original -->
   <section class="section">
-    <div class="container">
-      <div class="grid" id="gallery"></div>
-    </div>
+    <p class="hint">
+      All cars are modded unless stated otherwise. If you click on the names of the garages you get an in-depth view of all the cars.
+    </p>
+    <p class="hint">
+      Historical note from the original page: “Every time I obtain a new car, this website will be updated accordingly.” (This showcase is now frozen.)
+    </p>
   </section>
 
-  <!-- Back/Home -->
-  <a id="toTop" href="index.html" title="Back to Home"><span class="emoji">🐧</span> Home</a>
-  <div id="chibi">🐧</div>
+  <!-- Back to top -->
+  <a class="to-top pill" href="#top">Top</a>
 
-<script>
-/* Reuse BUTTONS list from index */
-const BUTTONS = [
-  { label: "GTAV Modded Cars Showcase (pencars)", href: "pencars/index.html" },
-  { label: "Random GTA Website", href: "RaidShadowLegends.html" },
-  { label: "Discord Bot", href: "discord-bot.html" },
-  { label: "HTML Hackscreen", href: "hack.html" },
-  { label: "Marvel Rivals Stats", href: "marvel.html" },
-  { label: "Cookie Clicker Mod", href: "cookie.html" },
-  { label: "ASCII Toys", href: "ascii.html" },
-  { label: "Rainbow Fire GIF", href: "rainbow-fire.html" },
-  { label: "Penguin Banner", href: "gfx-penguin-banner.html" },
-  { label: "Pride Gradients", href: "gradients.html" },
-  { label: "Penguin Igloo UI", href: "ui-igloo.html" },
-  { label: "Robux Meme UI", href: "robux.html" },
-  { label: "Desktop Messenger", href: "messenger.html" },
-  { label: "Waitlist Mock", href: "waitlist.html" },
-  { label: "V/VI Logo Lab", href: "logo-lab.html" },
-  { label: "Tiny Utilities", href: "utils.html" },
-  { label: "Gradient Maker", href: "gradient-maker.html" },
-  { label: "LS Airport Sign", href: "lsia-sign.html" },
-  { label: "Waldo Horror", href: "waldo-horror.html" },
-  { label: "Penguin Emojis", href: "penguin-emojis.html" },
-  { label: "Pong Leaderboard", href: "pong.html" },
-  { label: "Heist Bible", href: "heist-bible.html" },
-  { label: "Tag Generator", href: "tag-generator.html" },
-  { label: "Penguin Stickers", href: "stickers.html" },
-  { label: "Random Toy", href: "toy.html" }
-];
-
-const grid = document.getElementById('gallery');
-grid.innerHTML = BUTTONS.map(b=>`
-  <article class="card">
-    <div class="caption">
-      <a href="${b.href}" target="_blank" rel="noopener noreferrer">${b.label}</a>
-    </div>
-  </article>
-`).join('');
-
-/* Floating penguin */
-const chibi = document.getElementById("chibi");
-let x = window.innerWidth * 0.2, y = window.innerHeight * 0.3, size = 44;
-let vx = 0.85, vy = 0.65, rafId = null;
-function step(){
-  const w = window.innerWidth, h = window.innerHeight;
-  x += vx; y += vy;
-  if (x <= 0){ x = 0; vx = Math.abs(vx); }
-  if (x >= w - size){ x = w - size; vx = -Math.abs(vx); }
-  if (y <= 0){ y = 0; vy = Math.abs(vy); }
-  if (y >= h - size){ y = h - size; vy = -Math.abs(vy); }
-  chibi.style.transform = `translate(${x}px, ${y}px)`;
-  rafId = requestAnimationFrame(step);
-}
-function start(){ if (!rafId) rafId = requestAnimationFrame(step); }
-function stop(){ if (rafId){ cancelAnimationFrame(rafId); rafId=null; } }
-document.addEventListener("visibilitychange", () => document.hidden?stop():start());
-addEventListener("resize", () => {
-  x = Math.min(x, innerWidth - size);
-  y = Math.min(y, innerHeight - size);
-});
-chibi.addEventListener("click", () => { vx += (Math.random()-.5)*0.5; vy += (Math.random()-.5)*0.5; });
-start();
-</script>
 </body>
 </html>
