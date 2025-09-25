@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Cashier Change Game — Endless + Optimality Bonus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --bg1:#f8fbff; --bg2:#eef6ff; --ink:#1f2a37; --muted:#64748b;
+    --card:#ffffff; --ring:#e2e8f0; --accent:#7c3aed; --accent2:#06b6d4; --good:#22c55e; --bad:#ef4444; --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background: radial-gradient(120% 120% at 80% -10%, var(--bg2), var(--bg1));
+    color:var(--ink); font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+  }
+  .wrap{max-width:1100px;margin:24px auto;padding:16px;display:grid;gap:18px;grid-template-columns: 1.1fr .9fr}
+  .card{background:var(--card); border:1px solid var(--ring); border-radius:18px; box-shadow:0 12px 30px rgba(2,8,23,.06)}
+  .scene{padding:22px; position:relative; overflow:hidden}
+  .till{padding:18px}
+
+  .customer{display:flex; gap:18px; align-items:center}
+  .avatar{font-size:120px; line-height:1; filter: drop-shadow(0 10px 20px rgba(124,58,237,.15)); animation: bob 3s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .bubble{
+    background:linear-gradient(180deg,#fff, #f6faff);
+    border:1px solid var(--ring); border-radius:16px; padding:14px 16px; max-width:560px;
+    position:relative; box-shadow:0 6px 20px rgba(2,8,23,.06)
+  }
+  .bubble:after{
+    content:""; position:absolute; left:26px; top:100%; width:0; height:0;
+    border:10px solid transparent; border-top-color:#f6faff;
+    filter: drop-shadow(0 -1px 0 var(--ring));
+  }
+  .bubble h2{margin:0 0 6px; font-size:20px}
+  .bubble p{margin:6px 0; color:var(--muted)}
+  .big{font-size:22px; font-weight:700; color:#0f172a}
+  .item{font-weight:700}
+  .price,.paid,.due{font-weight:800}
+  .good{color:var(--good)} .bad{color:var(--bad)} .accent{color:var(--accent)} .warn{color:var(--warn)}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
+  .hud{display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
+  .pill{border:1px solid var(--ring); background:#fff; border-radius:999px; padding:6px 10px; font-size:13px}
+  .streak{border-color:#dbeafe; background:#eff6ff}
+  .score{border-color:#fae8ff; background:#fdf4ff}
+
+  .grid{display:grid; gap:10px}
+  .grid.cols-5{grid-template-columns: repeat(5, 1fr)}
+  .denom{
+    padding:10px; border:1px solid var(--ring); border-radius:12px; background:#fff; cursor:pointer; user-select:none;
+    display:flex; align-items:center; justify-content:center; gap:8px; height:64px;
+    transition: transform .08s ease, box-shadow .2s ease, border-color .2s ease;
+    box-shadow:0 6px 14px rgba(2,8,23,.05);
+  }
+  .denom:hover{transform: translateY(-2px); border-color:#cbd5e1; box-shadow:0 10px 20px rgba(2,8,23,.08)}
+  .bill{width:100%; height:44px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:800}
+  .bill.$1{background:#d1fae5; color:#065f46}
+  .bill.$5{background:#fee2e2; color:#991b1b}
+  .bill.$10{background:#e0e7ff; color:#3730a3}
+  .bill.$20{background:#dcfce7; color:#166534}
+  .bill.$50{background:#fce7f3; color:#9d174d}
+  .coin{width:40px;height:40px;border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; border:2px solid #e2e8f0}
+  .c50{background:#f3f4f6; color:#111827}
+  .c25{background:#fde68a; color:#92400e}
+  .c10{background:#e5e7eb; color:#374151}
+  .c05{background:#d1d5db; color:#374151}
+  .c01{background:#fef3c7; color:#7c2d12}
+
+  .tray{margin-top:14px; padding-top:12px; border-top:1px dashed #e2e8f0}
+  .tray .tag{display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; border:1px solid var(--ring); margin:4px; background:#fff}
+  .btns{display:flex; gap:8px; margin-top:12px}
+  button{
+    border:1px solid var(--ring); background:#fff; color:var(--ink); padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:700
+  }
+  button.primary{ background:linear-gradient(180deg, #a78bfa, #7c3aed); color:#fff; border:0; box-shadow:0 10px 22px rgba(124,58,237,.25)}
+  button.primary:hover{filter:brightness(1.03)}
+  button.ghost{background:#fff}
+  .msg{margin-top:10px; font-weight:800}
+  .sml{font-size:12px; color:var(--muted)}
+  .hint{font-size:12px; color:var(--muted); margin-top:6px}
+
+  .shake{animation:shake .25s linear}
+  @keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-2px,2px)}50%{transform:translate(2px,-1px)}75%{transform:translate(-1px,1px)}100%{transform:translate(0,0)}}
+  .pop{animation:pop .35s ease}
+  @keyframes pop{0%{transform:scale(.96);opacity:.6}100%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Scene -->
+  <section class="card scene" id="scene">
+    <div class="customer">
+      <div class="avatar" id="avatar">🧍</div>
+      <div class="bubble pop" id="bubble">
+        <h2>Welcome</h2>
+        <p>I’d like a <span class="item" id="itemName">—</span>.</p>
+        <div class="row">
+          <div>Price: <span class="price accent" id="price">$0.00</span></div>
+          <div>Paid: <span class="paid" id="paid">$0.00</span></div>
+        </div>
+        <div class="big">Change due: <span class="due" id="changeDue">$0.00</span></div>
+        <p class="sml" id="tip">Count exact change using bills and coins.</p>
+
+        <div class="hud">
+          <div class="pill">Round: <span id="round">1</span></div>
+          <div class="pill streak">Streak: <span id="streak">0</span></div>
+          <div class="pill score">Score: <span id="score">0</span></div>
+          <div class="pill">Best Streak: <span id="best">0</span></div>
+          <div class="pill">Best Score: <span id="bestScore">0</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Register -->
+  <section class="card till">
+    <h3 style="margin:0 0 10px;">Register</h3>
+
+    <div style="font-weight:700;margin:8px 0 6px;">Bills</div>
+    <div class="grid cols-5" id="bills"></div>
+
+    <div style="font-weight:700;margin:14px 0 6px;">Coins</div>
+    <div class="grid cols-5" id="coins"></div>
+
+    <div class="tray" id="tray"></div>
+
+    <div class="hint" id="optimalHint"></div>
+
+    <div class="btns">
+      <button class="ghost" id="undo">Undo</button>
+      <button class="ghost" id="clear">Clear</button>
+      <button class="primary" id="submit">Give Change</button>
+      <button class="ghost" id="reset">Reset Session</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </section>
+</div>
+
+<script>
+(() => {
+  // Denominations in cents
+  const BILLS = [1,5,10,20,50].map(d=>d*100);
+  const COINS = [50,25,10,5,1];
+  const ALL_DESC = [5000,2000,1000,500,100,50,25,10,5,1]; // for greedy optimal
+
+  // Items
+  const ITEMS = [
+    "🍎 Apple","🥐 Croissant","🥤 Soda","🍫 Chocolate bar","🧃 Juice box",
+    "🍪 Cookie","🍩 Donut","🥪 Sandwich","🧀 Cheese wedge","🍓 Berries",
+    "☕ Coffee","🍟 Fries","🥛 Milk","🧁 Cupcake","🥖 Baguette","🥗 Salad",
+    "🌮 Taco","🍕 Slice","🍜 Noodles","🥙 Wrap"
+  ];
+
+  // DOM helpers
+  const el = id => document.getElementById(id);
+  const priceEl = el('price'), paidEl = el('paid'), dueEl = el('changeDue');
+  const itemEl = el('itemName'), trayEl = el('tray'), msgEl = el('msg');
+  const roundEl = el('round'), streakEl = el('streak'), bestEl = el('best');
+  const scoreEl = el('score'), bestScoreEl = el('bestScore');
+  const billsEl = el('bills'), coinsEl = el('coins'), sceneEl = el('scene'), bubbleEl = el('bubble'), optimalHintEl = el('optimalHint');
+
+  // State
+  let round = 1, streak = 0, best = +(localStorage.getItem('bestStreak')||0);
+  let score = +(localStorage.getItem('score')||0);
+  let bestScore = +(localStorage.getItem('bestScore')||0);
+  let price = 0, paid = 0, due = 0;
+  let tray = [];
+
+  // Utils
+  const fmt = c => `$${(c/100).toFixed(2)}`;
+  const randInt = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+  const pick = arr => arr[randInt(0,arr.length-1)];
+
+  // Build register UI
+  function makeBill(d){
+    const face = d/100;
+    const div = document.createElement('div');
+    div.className = 'denom';
+    const b = document.createElement('div');
+    b.className = `bill $${face}`;
+    b.textContent = `$${face}`;
+    div.appendChild(b);
+    div.title = `Add $${face}`;
+    div.onclick = ()=> addToTray(d);
+    return div;
+  }
+  function makeCoin(c){
+    const div = document.createElement('div');
+    div.className = 'denom';
+    const coin = document.createElement('div');
+    const cls = c===50?'c50':c===25?'c25':c===10?'c10':c===5?'c05':'c01';
+    coin.className = `coin ${cls}`;
+    coin.textContent = c===1?'1¢':`${c}¢`;
+    div.appendChild(coin);
+    div.title = `Add ${coin.textContent}`;
+    div.onclick = ()=> addToTray(c);
+    return div;
+  }
+  function buildRegister(){
+    billsEl.innerHTML = ''; coinsEl.innerHTML = '';
+    BILLS.forEach(v=>billsEl.appendChild(makeBill(v)));
+    COINS.forEach(v=>coinsEl.appendChild(makeCoin(v)));
+  }
+
+  // Tray rendering
+  function renderTray(){
+    const counts = {};
+    for (const v of tray) counts[v] = (counts[v]||0)+1;
+
+    const tags = [];
+    for (const d of BILLS){ if (counts[d]) tags.push(tag(`${fmt(d)} × ${counts[d]}`)); }
+    for (const c of COINS){ if (counts[c]) tags.push(tag(`${c===1?'1¢':c+'¢'} × ${counts[c]}`)); }
+
+    const total = tray.reduce((s,v)=>s+v,0);
+    trayEl.innerHTML = `
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">${tags.join('')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>Tray total:</strong> <span ${total===due?'class="good"':''}>${fmt(total)}</span></div>
+        <div style="color:var(--muted)">Target: ${fmt(due)}</div>
+      </div>
+    `;
+
+    // Live optimal hint
+    const opt = optimalFor(due);
+    const yourPieces = tray.length;
+    optimalHintEl.innerHTML = `Optimal target: <strong>${opt.pieces} piece${opt.pieces!==1?'s':''}</strong> &nbsp;|&nbsp; Your tray: <strong class="${yourPieces<=opt.pieces?'good':yourPieces===opt.pieces+1?'warn':''}">${yourPieces} piece${yourPieces!==1?'s':''}</strong>`;
+  }
+  const tag = (t)=>`<span class="tag">${t}</span>`;
+
+  // Add / Undo / Clear
+  function addToTray(v){
+    tray.push(v);
+    renderTray();
+    msg('');
+    bubbleBounce();
+  }
+  function undo(){ tray.pop(); renderTray(); }
+  function clearTray(){ tray = []; renderTray(); msg(''); }
+
+  // Round generation
+  function randomPrice(){
+    const dollars = randInt(0,49);
+    let cents = randInt(0,99);
+    if (Math.random()<0.35) cents = pick([9,19,29,39,49,59,69,79,89,95,99]);
+    const val = dollars*100 + cents;
+    return Math.max(25, val);
+  }
+  function randomPaid(mustExceed){
+    const choices = [100,500,1000,2000,5000,10000].filter(v=>v>mustExceed);
+    return choices.length ? pick(choices) : 10000;
+  }
+  function newRound(){
+    tray = [];
+    msg('');
+    price = randomPrice();
+    paid = randomPaid(price);
+    due = paid - price;
+
+    itemEl.textContent = pick(ITEMS);
+    priceEl.textContent = fmt(price);
+    paidEl.textContent = fmt(paid);
+    dueEl.textContent = fmt(due);
+    roundEl.textContent = round;
+    renderTray();
+
+    bubbleEl.classList.remove('pop'); void bubbleEl.offsetWidth; bubbleEl.classList.add('pop');
+    el('avatar').textContent = pick(['🧍','🧍‍♂️','🧍‍♀️','🙂','🧑','🧓','🧑‍🦰','🧑‍🦱','🧑‍🦳']);
+  }
+
+  // Optimal combo (greedy for US denominations)
+  function optimalFor(amount){
+    let remaining = amount;
+    const breakdown = {};
+    let pieces = 0;
+    for (const d of ALL_DESC){
+      if (remaining<=0) break;
+      const n = Math.floor(remaining / d);
+      if (n>0){ breakdown[d] = n; pieces += n; remaining -= n*d; }
+    }
+    return { pieces, breakdown };
+  }
+
+  // Submit
+  function submit(){
+    const total = tray.reduce((s,v)=>s+v,0);
+    if (total===due){
+      const opt = optimalFor(due);
+      const yourPieces = tray.length;
+
+      // Scoring
+      let delta = 100; // correct
+      let bonusMsg = '';
+      if (yourPieces === opt.pieces){ delta += 50; bonusMsg = ' Optimal combo +50.'; }
+      else if (yourPieces === opt.pieces + 1){ delta += 20; bonusMsg = ' Near-optimal +20.'; }
+
+      score += delta;
+      bestScore = Math.max(bestScore, score);
+      localStorage.setItem('score', String(score));
+      localStorage.setItem('bestScore', String(bestScore));
+
+      streak++; best = Math.max(best, streak);
+      localStorage.setItem('bestStreak', String(best));
+
+      // UI updates
+      streakEl.textContent = String(streak);
+      bestEl.textContent = String(best);
+      scoreEl.textContent = String(score);
+      bestScoreEl.textContent = String(bestScore);
+
+      msg(`Correct +${delta}.${bonusMsg}`, 'good');
+      sceneEl.classList.add('shake');
+      setTimeout(()=>sceneEl.classList.remove('shake'), 250);
+
+      // Endless — next customer
+      round++; setTimeout(newRound, 650);
+    } else {
+      const diff = due - total;
+      const sign = diff>0? 'short by ' : 'over by ';
+      const abs = Math.abs(diff);
+      streak = 0; streakEl.textContent = '0';
+      msg(`Not quite — ${sign}${fmt(abs)}.`, 'bad');
+    }
+  }
+
+  function msg(t, kind){
+    msgEl.textContent = t || '';
+    msgEl.style.color = kind==='good' ? 'var(--good)' : kind==='bad' ? 'var(--bad)' : 'inherit';
+  }
+  function bubbleBounce(){
+    bubbleEl.style.transform = 'translateY(-2px)'; bubbleEl.style.transition='transform .07s ease';
+    requestAnimationFrame(()=>{ bubbleEl.style.transform='translateY(0)' });
+  }
+
+  // Buttons
+  el('undo').onclick = undo;
+  el('clear').onclick = clearTray;
+  el('submit').onclick = submit;
+  el('reset').onclick = ()=>{
+    // reset session but keep bests
+    score = 0; streak = 0; round = 1;
+    localStorage.setItem('score','0');
+    scoreEl.textContent = '0';
+    streakEl.textContent = '0';
+    roundEl.textContent = '1';
+    msg('Session reset.');
+    newRound();
+  };
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    if (e.key==='Backspace'){ e.preventDefault(); undo(); }
+    if (e.key==='Enter'){ submit(); }
+    if (e.key==='1') addToTray(100);
+    if (e.key==='5') addToTray(500);
+    if (e.key==='0') addToTray(1000);     // quick $10
+    if (e.key.toLowerCase()==='t') addToTray(2000); // quick $20
+    if (e.key.toLowerCase()==='y') addToTray(5000); // quick $50
+    if (e.key.toLowerCase()==='q') addToTray(50);
+    if (e.key.toLowerCase()==='w') addToTray(25);
+    if (e.key.toLowerCase()==='e') addToTray(10);
+    if (e.key.toLowerCase()==='r') addToTray(5);
+    if (e.key.toLowerCase()==='p') addToTray(1);
+  });
+
+  // Init
+  bestEl.textContent = String(best);
+  scoreEl.textContent = String(score);
+  bestScoreEl.textContent = String(bestScore);
+  buildRegister();
+  newRound();
+})();
+</script>
+</body>
+</html>
