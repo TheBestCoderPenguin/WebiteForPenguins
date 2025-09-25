@@ -12,7 +12,7 @@
     --accent:#ff4d4d;
     --glow:rgba(0,255,200,.2);
   }
-  /* Base */
+
   html,body{height:100%}
   body {
     margin:0;
@@ -23,7 +23,7 @@
     overflow-x:hidden;
   }
 
-  /* Ambient FX layers */
+
   .fx {
     position: fixed; inset: 0; pointer-events:none;
     z-index: 0;
@@ -63,11 +63,11 @@
   .fx.fog1{ animation: fog drift 60s linear infinite; opacity:.25 }
   .fx.fog2{ animation: fog2 drift2 90s linear infinite; opacity:.18 }
 
-  /* Game frame (bigger) */
+ 
   #game {
     position: relative;
     z-index: 1;
-    max-width: 1000px;   /* bigger */
+    max-width: 1000px;   
     margin: 40px auto;
     background: linear-gradient(180deg, #0e0f14 0%, var(--panel) 100%);
     padding: 28px;
@@ -76,7 +76,7 @@
     box-shadow:
       0 0 40px var(--glow),
       inset 0 0 30px rgba(0,0,0,.6);
-    transform: translateZ(0); /* hint for smoother animations */
+    transform: translateZ(0); 
   }
 
   h1 {
@@ -104,11 +104,11 @@
 
   #story {
     min-height: 150px;
-    font-size: 18px;        /* larger text */
+    font-size: 18px;     
     letter-spacing:.3px;
     margin-bottom: 12px;
   }
-  /* Typewriter reveal */
+ 
   .typewriter {
     display:inline-block;
     border-right: 2px solid rgba(255,255,255,.5);
@@ -137,14 +137,14 @@
   }
   .choices button:active { transform: translateY(0) scale(.997) }
 
-  /* Sanity-driven visuals */
+  
   .low-sanity #game{
     animation: heartbeat 2.2s ease-in-out infinite;
   }
   .low-sanity .fx.vignette::before{ filter: saturate(1.2) brightness(.95); }
   .shake { animation: shake .5s linear; }
 
-  /* Keyframes */
+  
   @keyframes caret { 0%,49%{border-color:transparent} 50%,100%{border-color:rgba(255,255,255,.5)} }
   @keyframes scan { 0%{background-position-y:0} 100%{background-position-y:100%} }
   @keyframes noise { 
@@ -185,7 +185,7 @@
 </style>
 </head>
 <body>
-<!-- Atmosphere layers -->
+
 <div class="fx vignette"></div>
 <div class="fx scanlines"></div>
 <div class="fx noise"></div>
@@ -355,7 +355,7 @@ const scenes = {
   }
 };
 
-/* -------- Rendering with typewriter + FX -------- */
+// Rendering with typewriter
 const storyEl = document.getElementById("story");
 const choicesEl = document.getElementById("choices");
 const statsEl = document.getElementById("stats");
@@ -370,7 +370,7 @@ function typeText(html, cb){
   let i = 0;
   function step(){
     if(i >= html.length){ tw.classList.remove("typewriter"); cb && cb(); return; }
-    // If we hit a tag, fast-forward to its end so markup isn't typed character-by-character
+   
     if(html[i] === "<"){
       const close = html.indexOf(">", i);
       if(close !== -1){
