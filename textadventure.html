@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Outlast Text Adventure Expanded</title>
+<style>
+  :root{
+    --ink:#e6e6e6;
+    --bg:#0a0a0d;
+    --panel:#111;
+    --ring:#333;
+    --accent:#ff4d4d;
+    --glow:rgba(0,255,200,.2);
+  }
+  /* Base */
+  html,body{height:100%}
+  body {
+    margin:0;
+    background: radial-gradient(120% 90% at 50% 10%, #101217 0%, var(--bg) 60%);
+    color: var(--ink);
+    font-family: "Courier New", monospace;
+    line-height: 1.6;
+    overflow-x:hidden;
+  }
+
+  /* Ambient FX layers */
+  .fx {
+    position: fixed; inset: 0; pointer-events:none;
+    z-index: 0;
+  }
+  .fx.vignette::before{
+    content:"";
+    position:absolute; inset:-10vmax;
+    background: radial-gradient(60% 50% at 50% 20%, transparent 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,.8) 100%);
+    mix-blend-mode: multiply;
+  }
+  .fx.scanlines::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, rgba(0,0,0,0) 1px 3px);
+    animation: scan 7s linear infinite;
+    opacity:.15;
+  }
+  .fx.noise::before{
+    content:"";
+    position:absolute; inset:-20%;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.05) 40%, transparent 41%),
+      radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,.04) 40%, transparent 41%),
+      radial-gradient(2px 2px at 40% 80%, rgba(255,255,255,.03) 40%, transparent 41%);
+    animation: noise 4s steps(60) infinite;
+    opacity:.2;
+    filter: blur(.5px);
+  }
+  .fx.fog1, .fx.fog2{
+    background:
+      radial-gradient(60vmax 35vmax at -20% 30%, rgba(180,255,240,.06), transparent 60%),
+      radial-gradient(50vmax 40vmax at 120% 70%, rgba(200,230,255,.05), transparent 60%);
+    filter: blur(10px);
+    mix-blend-mode: screen;
+  }
+  .fx.fog1{ animation: fog drift 60s linear infinite; opacity:.25 }
+  .fx.fog2{ animation: fog2 drift2 90s linear infinite; opacity:.18 }
+
+  /* Game frame (bigger) */
+  #game {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;   /* bigger */
+    margin: 40px auto;
+    background: linear-gradient(180deg, #0e0f14 0%, var(--panel) 100%);
+    padding: 28px;
+    border: 2px solid var(--ring);
+    border-radius: 10px;
+    box-shadow:
+      0 0 40px var(--glow),
+      inset 0 0 30px rgba(0,0,0,.6);
+    transform: translateZ(0); /* hint for smoother animations */
+  }
+
+  h1 {
+    color: var(--accent);
+    text-align: center;
+    margin: 0 0 12px;
+    text-shadow: 0 0 8px rgba(255,77,77,.35);
+    letter-spacing: 1px;
+    animation: titleFlicker 6s infinite;
+  }
+
+  .statbar {
+    font-size: 15px;
+    margin-bottom: 12px;
+    color: #00ffe0;
+    display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+    opacity:.95;
+  }
+  .statbar .pill{
+    border:1px solid rgba(255,255,255,.12);
+    padding:6px 10px; border-radius:999px;
+    background:#0d1220;
+    box-shadow: inset 0 0 10px rgba(0,255,200,.08);
+  }
+
+  #story {
+    min-height: 150px;
+    font-size: 18px;        /* larger text */
+    letter-spacing:.3px;
+    margin-bottom: 12px;
+  }
+  /* Typewriter reveal */
+  .typewriter {
+    display:inline-block;
+    border-right: 2px solid rgba(255,255,255,.5);
+    animation: caret 1s steps(1) infinite;
+  }
+
+  .choices button {
+    display: block;
+    background: #1a1d26;
+    color: #eee;
+    border: 1px solid #585b66;
+    padding: 12px;
+    margin: 10px 0;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 6px;
+    text-align: left;
+    transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,.35);
+  }
+  .choices button:hover {
+    background: #222733;
+    border-color: #7a8aa5;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0,0,0,.45);
+  }
+  .choices button:active { transform: translateY(0) scale(.997) }
+
+  /* Sanity-driven visuals */
+  .low-sanity #game{
+    animation: heartbeat 2.2s ease-in-out infinite;
+  }
+  .low-sanity .fx.vignette::before{ filter: saturate(1.2) brightness(.95); }
+  .shake { animation: shake .5s linear; }
+
+  /* Keyframes */
+  @keyframes caret { 0%,49%{border-color:transparent} 50%,100%{border-color:rgba(255,255,255,.5)} }
+  @keyframes scan { 0%{background-position-y:0} 100%{background-position-y:100%} }
+  @keyframes noise { 
+    0%{transform: translate(0,0)} 20%{transform: translate(-1%,1%)} 
+    40%{transform: translate(1%,-1%)} 60%{transform: translate(-0.5%,0.5%)} 
+    80%{transform: translate(0.5%,-0.5%)} 100%{transform: translate(0,0)} 
+  }
+  @keyframes fog { from{background-position: 0 0, 0 0} to{background-position: 200% 0, -200% 0} }
+  @keyframes fog2 { from{background-position: 0 0, 0 0} to{background-position: -300% 0, 300% 0} }
+  @keyframes drift { }
+  @keyframes drift2 { }
+  @keyframes titleFlicker{
+    0%, 97%, 100% { opacity:1; filter:none }
+    2% { opacity:.85; filter: blur(.3px) brightness(.9) }
+    3% { opacity:1 }
+    35% { opacity: .94 }
+    36% { opacity:.7; filter: blur(.6px) }
+    37% { opacity:1 }
+    70% { opacity:.96 }
+    71% { opacity:.6; filter: blur(1px) }
+    72% { opacity:1 }
+  }
+  @keyframes heartbeat{
+    0%{box-shadow:0 0 40px var(--glow), inset 0 0 30px rgba(0,0,0,.6)}
+    20%{box-shadow:0 0 80px rgba(255,77,77,.28), inset 0 0 40px rgba(0,0,0,.55)}
+    40%{box-shadow:0 0 40px var(--glow), inset 0 0 30px rgba(0,0,0,.6)}
+    60%{box-shadow:0 0 80px rgba(255,77,77,.2), inset 0 0 40px rgba(0,0,0,.55)}
+    100%{box-shadow:0 0 40px var(--glow), inset 0 0 30px rgba(0,0,0,.6)}
+  }
+  @keyframes shake {
+    0%{ transform: translate(0,0) }
+    20%{ transform: translate(-2px,2px) rotate(-.2deg) }
+    40%{ transform: translate(2px,-2px) rotate(.2deg) }
+    60%{ transform: translate(-1px,1px) rotate(-.1deg) }
+    80%{ transform: translate(1px,-1px) rotate(.1deg) }
+    100%{ transform: translate(0,0) }
+  }
+</style>
+</head>
+<body>
+<!-- Atmosphere layers -->
+<div class="fx vignette"></div>
+<div class="fx scanlines"></div>
+<div class="fx noise"></div>
+<div class="fx fog1"></div>
+<div class="fx fog2"></div>
+
+<div id="game">
+  <h1>Outlast: Text Adventure</h1>
+  <div id="stats" class="statbar"></div>
+  <div id="story"></div>
+  <div class="choices" id="choices"></div>
+</div>
+
+<script>
+let state = {
+  sanity: 5, 
+  battery: 3, 
+  alive: true,
+  scene: "intro"
+};
+
+const scenes = {
+  intro: {
+    text: `You sneak into <b>Mount Massive Asylum</b> at night. The gates shut behind you. 
+    The air is heavy with mildew and secrets. Your camcorder hums in your hands.`,
+    choices: [
+      { text: "Step into the courtyard.", action: () => { state.scene = "courtyard"; } },
+      { text: "Slip through a broken window.", action: () => { state.scene = "lobby"; } }
+    ]
+  },
+
+  courtyard: {
+    text: `The courtyard is overgrown. Statues stare with blank eyes. 
+    A patient wanders barefoot, muttering to himself.`,
+    choices: [
+      { text: "Approach the patient.", action: () => { state.scene = "npcPatient"; } },
+      { text: "Find a side door to the men's ward.", action: () => { state.scene = "mensWard"; } }
+    ]
+  },
+
+  npcPatient: {
+    text: `The patient notices you. "It's inside us all," he whispers. He offers you a flickering flashlight battery.`,
+    choices: [
+      { text: "Take the battery.", action: () => { state.battery++; state.scene = "mensWard"; } },
+      { text: "Refuse and walk away.", action: () => { state.sanity--; state.scene = "mensWard"; } }
+    ]
+  },
+
+  lobby: {
+    text: `The lobby reeks of copper and death. Blood trails into the asylum's depths. 
+    A Variant growls nearby.`,
+    choices: [
+      { text: "Hide in the shadows.", action: () => { state.scene = "mensWard"; } },
+      { text: "Run deeper into the asylum.", action: () => { state.scene = "womensWard"; state.sanity--; fxShake(); } }
+    ]
+  },
+
+  mensWard: {
+    text: `The men's ward is chaos. Graffiti scrawled on walls reads: "WALRIDER." 
+    Two inmates fight savagely in the hallway.`,
+    choices: [
+      { text: "Sneak past them.", action: () => { state.scene = "showers"; } },
+      { text: "Try to talk to them.", action: () => { state.scene = "npcInmates"; } }
+    ]
+  },
+
+  npcInmates: {
+    text: `The inmates turn to you with wild eyes. One laughs, the other screams. 
+    "The priest wants you," they chant.`,
+    choices: [
+      { text: "Back away slowly.", action: () => { state.scene = "showers"; } },
+      { text: "Push past them.", action: () => { state.sanity--; state.scene = "showers"; fxShake(); } }
+    ]
+  },
+
+  womensWard: {
+    text: `The women's ward is deserted but blood paints every bed. 
+    A shadowy figure drifts across the room: the <b>Wallrider</b>.`,
+    choices: [
+      { text: "Chase the shadow.", action: () => { state.scene = "sewers"; state.sanity--; fxShake(); } },
+      { text: "Retreat quickly.", action: () => { state.scene = "showers"; } }
+    ]
+  },
+
+  showers: {
+    text: `Cold showers drip endlessly. Steam fogs your camera. 
+    A massive Variant bursts from the mist with a scream.`,
+    choices: [
+      { text: "Hide in a stall.", action: () => { state.scene = "escapeShowers"; } },
+      { text: "Sprint toward the exit.", action: () => { state.scene = "caughtShowers"; fxShake(); } }
+    ]
+  },
+
+  escapeShowers: {
+    text: `You duck into a stall, trembling. The Variant smashes doors, then storms away. 
+    You slip into a stairwell leading down.`,
+    choices: [
+      { text: "Descend into the sewers.", action: () => { state.scene = "sewers"; } }
+    ]
+  },
+
+  caughtShowers: {
+    text: `The Variant grabs you by the throat and slams you into the tiles. 
+    Darkness swallows your vision. <b>You are dead.</b>`,
+    choices: [
+      { text: "Restart", action: () => { state = { sanity:5,battery:3,alive:true,scene:"intro"}; } }
+    ]
+  },
+
+  sewers: {
+    text: `The sewers stink of rot. Water sloshes around your knees. 
+    The Wallrider flickers in and out of sight.`,
+    choices: [
+      { text: "Follow the whispers deeper.", action: () => { state.scene = "lab"; state.sanity--; } },
+      { text: "Climb a ladder toward a faint light.", action: () => { state.scene = "chapel"; } }
+    ]
+  },
+
+  chapel: {
+    text: `You stumble into a ruined chapel. The priest in tatters greets you. 
+    "The Wallrider chooses its host," he intones.`,
+    choices: [
+      { text: "Submit to the priest's ritual.", action: () => { state.scene = "endingPossessed"; } },
+      { text: "Flee through a side door.", action: () => { state.scene = "endingEscape"; } }
+    ]
+  },
+
+  lab: {
+    text: `You enter a secret laboratory. Computers hum, files scattered everywhere. 
+    Documents describe the <b>Morphogenic Engine</b>—birthplace of the Wallrider.`,
+    choices: [
+      { text: "Turn off the machines.", action: () => { state.scene = "endingWallrider"; } },
+      { text: "Record everything for evidence.", action: () => { state.scene = "endingEvidence"; } }
+    ]
+  },
+
+  endingPossessed: {
+    text: `<b>ENDING A:</b> The priest completes his ritual. The Wallrider floods into you. 
+    Your mind shatters. you are now its vessel.`,
+    choices: [
+      { text: "Play Again", action: () => { state = { sanity:5,battery:3,alive:true,scene:"intro"}; } }
+    ]
+  },
+
+  endingEscape: {
+    text: `<b>ENDING B:</b> You burst into the forest beyond the asylum. 
+    Screams echo behind you. You escaped, but the Wallrider still roams free.`,
+    choices: [
+      { text: "Play Again", action: () => { state = { sanity:5,battery:3,alive:true,scene:"intro"}; } }
+    ]
+  },
+
+  endingWallrider: {
+    text: `<b>ENDING C:</b> You cut the power to the Morphogenic Engine. 
+    The Wallrider screams and dissolves into mist. Mount Massive falls silent.`,
+    choices: [
+      { text: "Play Again", action: () => { state = { sanity:5,battery:3,alive:true,scene:"intro"}; } }
+    ]
+  },
+
+  endingEvidence: {
+    text: `<b>ENDING D:</b> You escape with proof of the experiments. 
+    The world will know, but the Wallrider survives in the dark.`,
+    choices: [
+      { text: "Play Again", action: () => { state = { sanity:5,battery:3,alive:true,scene:"intro"}; } }
+    ]
+  }
+};
+
+/* -------- Rendering with typewriter + FX -------- */
+const storyEl = document.getElementById("story");
+const choicesEl = document.getElementById("choices");
+const statsEl = document.getElementById("stats");
+const gameEl = document.getElementById("game");
+
+function typeText(html, cb){
+  storyEl.innerHTML = "";
+  const tw = document.createElement("span");
+  tw.className = "typewriter";
+  storyEl.appendChild(tw);
+
+  let i = 0;
+  function step(){
+    if(i >= html.length){ tw.classList.remove("typewriter"); cb && cb(); return; }
+    // If we hit a tag, fast-forward to its end so markup isn't typed character-by-character
+    if(html[i] === "<"){
+      const close = html.indexOf(">", i);
+      if(close !== -1){
+        tw.innerHTML += html.slice(i, close+1);
+        i = close+1;
+      } else {
+        tw.textContent += html[i++];
+      }
+    } else {
+      tw.innerHTML += html[i++];
+    }
+    // jitter speed slightly
+    const delay = 12 + Math.random()*28;
+    setTimeout(step, delay);
+  }
+  step();
+}
+
+function fxShake(){
+  gameEl.classList.add("shake");
+  setTimeout(()=>gameEl.classList.remove("shake"), 520);
+}
+
+function applySanityFX(){
+  if(state.sanity <= 3) document.body.classList.add("low-sanity");
+  else document.body.classList.remove("low-sanity");
+}
+
+function render() {
+  const scene = scenes[state.scene];
+  // Stats
+  statsEl.innerHTML = `
+    <span class="pill">Sanity: ${state.sanity}/10</span>
+    <span class="pill">Batteries: ${state.battery}</span>
+  `;
+  // Story (typewriter)
+  typeText(scene.text, ()=>{
+    // After text finishes, reveal choices
+    renderChoices(scene.choices);
+  });
+  applySanityFX();
+}
+
+function renderChoices(list){
+  choicesEl.innerHTML = "";
+  list.forEach(c => {
+    const btn = document.createElement("button");
+    btn.textContent = c.text;
+    btn.onclick = () => { c.action(); render(); };
+    choicesEl.appendChild(btn);
+  });
+}
+
+/* Kickoff */
+render();
+</script>
+</body>
+</html>
